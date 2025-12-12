@@ -8,15 +8,12 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
-import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
 
-interface UserMenuContentProps {
-    user: User;
-}
 
-export function UserMenuContent({ user }: UserMenuContentProps) {
+
+export function UserMenuContent({ user }) {
     const cleanup = useMobileNavigation();
 
     const handleLogout = () => {

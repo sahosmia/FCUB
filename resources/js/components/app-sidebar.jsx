@@ -10,26 +10,25 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { courses, dashboard } from '@/routes';
-import { type NavItem } from '@/types';
+import { dashboard } from '@/routes';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Book } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const mainNavItems = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Course',
-        href: courses(),
-        icon: Book,
+        title: 'Dashboard',
+        href: dashboard(),
+        icon: LayoutGrid,
     },
 ];
 
-const footerNavItems: NavItem[] = [
+const footerNavItems = [
     {
         title: 'Repository',
         href: 'https://github.com/laravel/react-starter-kit',
