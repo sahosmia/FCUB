@@ -36,11 +36,12 @@ export default function Index() {
     /**
      * Server-provided paginated data & initial filters
      */
-    const { courses = {}, filters: serverFilters = {} } = usePage().props;
+    const { courses = {}, filters: serverFilters = {}, users:{}} = usePage().props;
     const items = courses.data || [];
+    const users = users || [];
 
     /**
-     * Local filter state (search, sort, limit)
+     * Local filter state (search, sort, limit, is_active, semester, user_id)
      * Maintains UI-level state independently of server response.
      */
     const [filters, setFilters] = useState({
@@ -48,6 +49,9 @@ export default function Index() {
         sort_by: serverFilters.sort_by ?? 'created_at',
         sort_dir: serverFilters.sort_dir ?? 'desc',
         limit: serverFilters.limit ?? 10,
+        is_active: serverFilters.is_active ?? '',
+        semester: serverFilters.semester ?? '',
+        user_id: serverFilters.user_id ?? '',                
     });
 
     /**
@@ -89,12 +93,31 @@ export default function Index() {
         });
     }
 
+    const selectItems = [
+        { value: '5', label: '5' },
+        { value: '10', label: '10' },
+        { value: '25', label: '25' },
+        { value: '50', label: '50' },
+    ];
+
+    const semesterItems = [
+        { value: 'spring', label: 'Spring' },
+        { value: 'summer', label: 'Summer' },
+        { value: 'fall', label: 'Fall' },
+        { value: 'winter', label: 'Winter' },
+    ];
+
     /**
-     * Handles immediate filter changes (sort_by, sort_dir, limit)
+     * Handles immediate filter changes (sort_by, sort_dir, limit, is_active, semester, user_id)
      */
+
+    //   function handleChange(key, value) {
+    //     setFilters((s) => ({ ...s, [key]: value }));
+    //     if (key !== 'search') applyFilters({ [key]: value, page: 1 });
+    // }
     function handleChange(key, value) {
-        setFilters((s) => ({ ...s, [key]: value }));
-        if (key !== 'search') applyFilters({ [key]: value, page: 1 });
+        setFilters((f) => ({ ...f, [key]: value }));
+        applyFilters({ [key]: value, page: 1 });
     }
 
     /**
@@ -179,12 +202,74 @@ export default function Index() {
                             <SelectValue placeholder="Limit" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="5">5</SelectItem>
-                            <SelectItem value="10">10</SelectItem>
-                            <SelectItem value="25">25</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
+                            {selectItems.map((item) => (
+                                <SelectItem
+                                    key={item.value}
+                                    value={item.value}
+                                >
+                                    {item.label}
+                                </SelectItem>
+                            ))}                            
                         </SelectContent>
                     </Select>
+
+                    {/* User Filter */}
+                    <Select
+                        value={String(filters.user_id)}
+                        onValueChange={(v) => handleChange('user_id', v)}
+                    >
+                        <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Filter by User" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="">All Users</SelectItem>
+                            {users.map((user) => (
+                                <SelectItem
+                                    key={user.id}
+                                    value={String(user.id)}
+                                >
+                                    {user.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    {/* semester filter can be added here */}
+                    <Select
+                        value={String(filters.semester)}
+                        onValueChange={(v) => handleChange('semester', v)}
+                    >
+                        <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Filter by Semester" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="">All Semesters</SelectItem>
+                            {semesterItems.map((item) => (
+                                <SelectItem
+                                    key={item.value}
+                                    value={item.value}
+                                >
+                                    {item.label}
+                                </SelectItem>
+                            ))}                            
+                        </SelectContent>
+                    </Select>
+
+                    {/* is_active filter can be added here */}
+                    <Select
+                        value={String(filters.is_active)}
+                        onValueChange={(v) => handleChange('is_active', v)}
+                    >
+                        <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Filter by Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="">All Statuses</SelectItem>
+                            <SelectItem value="1">Active</SelectItem>
+                            <SelectItem value="0">Inactive</SelectItem>
+                        </SelectContent>
+                    </Select>
+
                 </div>
 
                 {/* Table */}
@@ -194,7 +279,9 @@ export default function Index() {
                             <TableRow>
                                 <TableHead className="w-12">#</TableHead>
                                 <TableHead>Title</TableHead>
+                                <TableHead>User</TableHead>
                                 <TableHead>Description</TableHead>
+                                <TableHead>Status</TableHead>
                                 <TableHead className="w-40 text-right">
                                     Actions
                                 </TableHead>
@@ -221,11 +308,24 @@ export default function Index() {
                                         <TableCell className="font-medium">
                                             {course.title}
                                         </TableCell>
+                                        <TableCell className="font-medium">
+                                            {course.user.name}
+                                        </TableCell>
 
                                         <TableCell className="max-w-md truncate text-gray-600">
                                             {course.description}
                                         </TableCell>
-
+                                        <TableCell>
+                                            {course.is_active ? (
+                                                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">
+                                                    Active
+                                                </span>
+                                            ) : (
+                                                <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-800">
+                                                    Inactive
+                                                </span>
+                                            )}
+                                        </TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -34,6 +35,24 @@ class CourseController extends Controller
         });
     }
 
+    // apply semester filter if provided
+    if ($request->filled('semester')) {
+        $query->where('semester', $request->input('semester'));
+    }
+
+    // apply user filter if provided
+    if ($request->filled('user_id')) {
+        $query->where('user_id', $request->input('user_id'));
+    }
+
+    // Apply filter for active courses only if provided
+    if ($request->filled('is_active')) {
+        $isActive = filter_var($request->input('is_active'), FILTER_VALIDATE_BOOLEAN);
+        $query->where('is_active', $isActive);
+    }
+    
+    
+
     /**
      * Apply safe sorting
      * (Prevents user from sorting by unexpected columns)
@@ -51,11 +70,18 @@ class CourseController extends Controller
     $courses = $query->paginate($limit)
                      ->appends($request->query()); // Keeps URL params in pagination links
 
+// user data for dropdown filter
+$users = User::select('id', 'name')->get();
+
+    // Pass User data to filter by user
+    $courses->load('user:id,name');   
     /**
      * Send response to Inertia page
      */
+
     return Inertia::render('courses/Index', [
         'courses' => $courses,
+        'users'   => $users,
         'filters' => [
             'search'   => $search,
             'sort_by'  => $sortBy,
@@ -70,7 +96,10 @@ class CourseController extends Controller
 
     public function create()
     {
-        return Inertia::render('courses/Create');
+        $users = User::select('id', 'name')->get();
+        return Inertia::render('courses/Create', [
+            'users' => $users,
+        ]);
     }
 
     public function store(Request $request)
@@ -79,6 +108,10 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'duration' => 'nullable|integer',
+            'user_id' => 'required|exists:users,id',
+            'semester' => 'nullable|string|max:50',
+            'is_active' => 'nullable|boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         Course::create($data);
@@ -95,8 +128,10 @@ class CourseController extends Controller
 
     public function edit(Course $course)
     {
+        $users = User::select('id', 'name')->get();
         return Inertia::render('courses/Edit', [
             'course' => $course,
+            'users' => $users,
         ]);
     }
 
@@ -106,6 +141,10 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'duration' => 'nullable|integer',
+            'user_id' => 'required|exists:users,id',
+            'semester' => 'nullable|string|max:50',
+            'is_active' => 'nullable|boolean',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         $course->update($data);

@@ -13,6 +13,13 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('duration')->nullable();
+            $table->string('image')->nullable();
+            $table->enum('semester', ['spring', 'summer', 'fall', 'winter'])->default('fall');
+
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->boolean('is_active')->default(true);
+
+
             $table->timestamps();
         });
     }

@@ -13,5 +13,15 @@ class Course extends Model
         'title',
         'description',
         'duration',
+        'image',
+        'semester',
+        'user_id',
+        'is_active',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
