@@ -45,6 +45,17 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+
+            'constants' => [
+                'user_roles' => ['admin' => 'Admin', 'student' => 'Student'],
+                'status' => ['active' => 'Active', 'inactive' => 'Inactive'],
+                'semesters' => [
+                    'spring' => 'Spring',
+                    'summer' => 'Summer',
+                    'fall' => 'Fall',
+                    'winter' => 'Winter',
+                ],
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

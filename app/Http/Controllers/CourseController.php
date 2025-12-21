@@ -25,9 +25,6 @@ class CourseController extends Controller
      */
     $query = Course::query();
 
-    /**
-     * Apply search filter (title + description)
-     */
     if ($search) {
         $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
@@ -51,12 +48,6 @@ class CourseController extends Controller
         $query->where('is_active', $isActive);
     }
     
-    
-
-    /**
-     * Apply safe sorting
-     * (Prevents user from sorting by unexpected columns)
-     */
     $allowedSort = ['title', 'created_at'];
     if (!in_array($sortBy, $allowedSort)) {
         $sortBy = 'created_at';
@@ -64,21 +55,15 @@ class CourseController extends Controller
 
     $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
 
-    /**
-     * Execute paginated result
-     */
-    $courses = $query->paginate($limit)
-                     ->appends($request->query()); // Keeps URL params in pagination links
+    $courses = $query->paginate($limit)->appends($request->query()); // Keeps URL params in pagination links
 
-// user data for dropdown filter
-$users = User::select('id', 'name')->get();
+    $courses->load('user:id,name');
 
-    // Pass User data to filter by user
-    $courses->load('user:id,name');   
-    /**
-     * Send response to Inertia page
-     */
+    // user data for dropdown filter
+    $users = User::select('id', 'name')->get();
 
+    
+// return $users;
     return Inertia::render('courses/Index', [
         'courses' => $courses,
         'users'   => $users,

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -11,9 +12,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+
 Route::get('/about', function () {
     return Inertia::render('about');
 });
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
@@ -21,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('courses', CourseController::class);
+    Route::resource('users', UserController::class);
+
 });
 
 require __DIR__.'/settings.php';

@@ -5,6 +5,8 @@ import { useTableFilters } from '@/hooks/useTableFilters';
 import { useState, useEffect } from 'react';
 import { CheckCircle, Users } from 'lucide-react';
 
+import { roles } from '@/constants';
+
 // Custom Components
 import Pagination from '@/components/DataTable/Pagination';
 import StatusBadge from '@/components/DataTable/StatusBadeg';
@@ -20,19 +22,17 @@ import SelectForm from '@/components/form/SelectForm';
 
 
 export default function Index() {
-    const { courses = {}, filters: serverFilters = {}, users = [] } = usePage().props;
+    const { users = {}, filters: serverFilters = {} } = usePage().props;
 
     const { filters, searchTerm, setSearchTerm, handleChange } = useTableFilters({
         search: serverFilters.search ?? '',
         sort_by: serverFilters.sort_by ?? 'created_at',
         sort_dir: serverFilters.sort_dir ?? 'desc',
         limit: serverFilters.limit ?? 10,
-        is_active: serverFilters.is_active ?? '',
-        semester: serverFilters.semester ?? '',
-        user_id: serverFilters.user_id ?? '',
+        status: serverFilters.status ?? '',
+        role: serverFilters.role ?? '',
     });
 
-    // Debounce search effect (ekhaneo rakha jay ba hook-e neya jay)
     useEffect(() => {
         const t = setTimeout(() => {
             if (searchTerm !== filters.search) handleChange('search', searchTerm);
@@ -42,13 +42,13 @@ export default function Index() {
 
     return (
         <AppLayout>
-            <Head title="Courses" />
+            <Head title="Users" />
             <div className="space-y-6 p-6">
 
                 {/* Header Section */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Courses</h1>
-                    <Button asChild><Link href="/courses/create">New Course</Link></Button>
+                    <h1 className="text-2xl font-semibold">Users</h1>
+                    <Button asChild><Link href="/users/create">New User</Link></Button>
                 </div>
 
                 {/* Filter Section */}
@@ -64,8 +64,7 @@ export default function Index() {
                     {[
                         { key: 'sort_by', placeholder: 'Sort By', items: [{ label: 'Date', value: 'created_at' }, { label: 'Title', value: 'title' }] },
                         { key: 'limit', placeholder: 'Limit', items: selectItems },
-                        { key: 'user_id', placeholder: 'Filter by User', items: users.map(u => ({ label: u.name, value: String(u.id) })) },
-                        { key: 'semester', placeholder: 'Semester', items: semesters },
+                        { key: 'role', placeholder: 'Roles', items: roles },
                     ].map((config) => (
 
                         <SelectForm
@@ -86,33 +85,35 @@ export default function Index() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>#</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead>User</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {courses.data.map((course, index) => (
-                                <TableRow key={course.id}>
-                                    <TableCell>{(courses.from || 0) + index}</TableCell>
-                                    <TableCell className="font-medium">{course.title}</TableCell>
-                                    <TableCell>{course.user.name}</TableCell>
+                            {users.data.map((user, index) => (
+                                <TableRow key={user.id}>
+                                    <TableCell>{(users.from || 0) + index}</TableCell>
+                                    <TableCell>{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell>{user.role}</TableCell>
                                     <TableCell>
-                                        <StatusBadge active={course.is_active} />
+                                        <StatusBadge
+                                            status={user.status ? 'active' : 'inactive'}
+                                            text={user.status ? 'Approved' : 'Pending'}
+                                        />
                                     </TableCell>
+                                    
                                     <TableCell className="text-right">
-                                        <GenericActionMenu resource="courses" id={course.id}>
+                                        <GenericActionMenu resource="users" id={user.id}>
                                             {/* Extra New Menu */}
-                                            <DropdownMenuItem onClick={() => handleApprove(course.id)}>
-                                                <CheckCircle className="mr-2 h-4 w-4" /> Approve Course
+                                            <DropdownMenuItem onClick={() => handleApprove(user.id)}>
+                                                <CheckCircle className="mr-2 h-4 w-4" /> Approve User
                                             </DropdownMenuItem>
 
-                                            <DropdownMenuItem asChild>
-                                                <Link href={`/courses/${course.id}/students`}>
-                                                    <Users className="mr-2 h-4 w-4" /> View Students
-                                                </Link>
-                                            </DropdownMenuItem>
+                                            
                                         </GenericActionMenu>
                                     </TableCell>
                                 </TableRow>
@@ -120,7 +121,7 @@ export default function Index() {
                         </TableBody>
                     </Table>
                 </div>
-                <Pagination paginator={courses} />
+                <Pagination paginator={users} />
             </div>
         </AppLayout>
     );
