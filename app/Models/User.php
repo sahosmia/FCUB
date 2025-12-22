@@ -24,6 +24,18 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'phone',
+        'gender',
+        'date_of_birth',
+        'course_fee',
+        'paid_fee',
+        'due_fee',
+        'batch_id',
+        'session',
+        'admission_document',
+        'admission_fee',
+        'student_id',
+
     ];
 
     /**
@@ -51,6 +63,13 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'status' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the batch that the user belongs to.
+     */    public function batch()
+    {
+        return $this->belongsTo(Batch::class);
     }
 
 

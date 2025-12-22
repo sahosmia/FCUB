@@ -1,4 +1,3 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -12,7 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { Link } from '@inertiajs/react';
-import { Book, BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, User } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems = [
@@ -25,6 +24,17 @@ const mainNavItems = [
         title: 'Courses',
         href:  '/courses',
         icon: BookOpen ,
+    },
+    // user, batch
+    {
+        title: 'Batches',
+        href:  '/batches',
+        icon: Folder,
+    },
+    {
+        title: 'Users',
+        href:  '/users',
+        icon: User,
     },
 ];
 

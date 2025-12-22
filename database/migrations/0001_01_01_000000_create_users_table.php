@@ -18,6 +18,17 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'student'])->default('student');
+            $table->string('phone')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->decimal('course_fee', 10, 2)->nullable();
+            $table->decimal('paid_fee', 10, 2)->nullable();
+            $table->decimal('due_fee', 10, 2)->nullable();
+            $table->foreignId('batch_id')->nullable()->constrained('batches')->onDelete('set null');
+            $table->string('session')->nullable();
+            $table->string('admission_document')->nullable();
+            $table->decimal('admission_fee', 10, 2)->nullable();
+            $table->string('student_id')->unique()->nullable();
             $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BatchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -25,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('courses', CourseController::class);
     Route::resource('users', UserController::class);
+    Route::resource('batches', BatchController::class);
 
 });
 
