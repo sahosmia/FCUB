@@ -50,7 +50,6 @@ class PaymentController extends Controller
         ]);
 
         return redirect()->route('users.show', $user);
-        return redirect()->route('users.show', $user);
     }
 
     public function destroy(Payment $payment)
@@ -68,6 +67,6 @@ class PaymentController extends Controller
             'due_fee' => ($user->course_fee + $user->admission_fee) - $user->payments()->sum('amount'),
         ]);
 
-        return redirect()->route('users.payments.index', $user);
+        return redirect()->route('users.show', $user);
     }
 }

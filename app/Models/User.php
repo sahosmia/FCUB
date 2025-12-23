@@ -79,4 +79,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class);
     }
+
+    /**
+     * The courses that the user is enrolled in.
+     */
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }
