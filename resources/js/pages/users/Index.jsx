@@ -1,10 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { semesters, selectItems } from '@/constants';
 import { useTableFilters } from '@/hooks/useTableFilters';
 import { useState, useEffect } from 'react';
 import { CheckCircle, Users } from 'lucide-react';
-
 import { roles } from '@/constants';
 
 // Custom Components
@@ -17,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import SelectForm from '@/components/form/SelectForm';
 
 
@@ -39,6 +38,10 @@ export default function Index() {
         }, 500);
         return () => clearTimeout(t);
     }, [searchTerm]);
+
+    const handleApprove = (id) => {
+        router.post(`/users/${id}/approve`);
+    };
 
     return (
         <AppLayout>
@@ -114,12 +117,11 @@ export default function Index() {
                                     
                                     <TableCell className="text-right">
                                         <GenericActionMenu resource="users" id={user.id}>
-                                            {/* Extra New Menu */}
-                                            <DropdownMenuItem onClick={() => handleApprove(user.id)}>
-                                                <CheckCircle className="mr-2 h-4 w-4" /> Approve User
-                                            </DropdownMenuItem>
-
-                                            
+                                            {!user.status && (
+                                                <DropdownMenuItem onClick={() => handleApprove(user.id)}>
+                                                    <CheckCircle className="mr-2 h-4 w-4" /> Approve User
+                                                </DropdownMenuItem>
+                                            )}
                                         </GenericActionMenu>
                                     </TableCell>
                                 </TableRow>
@@ -132,5 +134,3 @@ export default function Index() {
         </AppLayout>
     );
 }
-
-

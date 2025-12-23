@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use App\Models\Batch;
 use Illuminate\Http\Request;
@@ -17,10 +18,6 @@ class UserController extends Controller
         $sortDir = $request->input('sort_dir', 'desc');
         $limit = (int) $request->input('limit', 10);
 
-        /**
-         * Base query for Users
-         *
-         */
         $query = User::query();
 
         if ($search) {
@@ -30,14 +27,10 @@ class UserController extends Controller
             });
         }
 
-        // apply semester filter if provided
         if ($request->filled('role')) {
             $query->where('role', $request->input('role'));
         }
 
-
-
-        // Apply filter for active users only if provided
         if ($request->filled('status')) {
             $isActive = filter_var($request->input('status'), FILTER_VALIDATE_BOOLEAN);
             $query->where('status', $isActive);
@@ -50,7 +43,7 @@ class UserController extends Controller
 
         $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
 
-        $users = $query->paginate($limit)->appends($request->query()); // Keeps URL params in pagination links
+        $users = $query->paginate($limit)->appends($request->query());
 
         return Inertia::render('users/Index', [
             'users' => $users,
@@ -63,9 +56,6 @@ class UserController extends Controller
         ]);
     }
 
-
-
-
     public function create()
     {
         return Inertia::render('users/Create', [
@@ -73,26 +63,12 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|string|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|string|in:admin,student',
-            'status' => 'nullable|boolean',
-            'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|string|in:male,female,other',
-            'date_of_birth' => 'nullable|date',
-            'course_fee' => 'nullable|numeric',
-            'paid_fee' => 'nullable|numeric',
-            'due_fee' => 'nullable|numeric',
-            'batch_id' => 'nullable|exists:batches,id',
-            'session' => 'nullable|string|max:255',
-            'admission_document' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'admission_fee' => 'nullable|numeric',
-            'student_id' => 'nullable|string|unique:users,student_id',
-        ]);
+        $data = $request->validated();
+
+        $data['status'] = false; // Default to pending
+        $data['due_fee'] = ($data['course_fee'] + $data['admission_fee']) - ($data['paid_fee'] ?? 0);
 
         if ($request->hasFile('admission_document')) {
             $data['admission_document'] = $request->file('admission_document')->store('documents', 'public');
@@ -105,7 +81,6 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-
         return Inertia::render('users/Show', [
             'user' => $user->load('batch'),
         ]);
@@ -119,31 +94,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|string|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|string|in:admin,student',
-            'status' => 'nullable|boolean',
-            'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|string|in:male,female,other',
-            'date_of_birth' => 'nullable|date',
-            'course_fee' => 'nullable|numeric',
-            'paid_fee' => 'nullable|numeric',
-            'due_fee' => 'nullable|numeric',
-            'batch_id' => 'nullable|exists:batches,id',
-            'session' => 'nullable|string|max:255',
-            'admission_document' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'admission_fee' => 'nullable|numeric',
-            'student_id' => 'nullable|string|unique:users,student_id,' . $user->id,
-        ]);
+        $data = $request->validated();
 
         if (empty($data['password'])) {
             unset($data['password']);
         }
-        
+
         if ($request->hasFile('admission_document')) {
             if ($user->admission_document) {
                 Storage::disk('public')->delete($user->admission_document);
@@ -156,12 +114,18 @@ class UserController extends Controller
         return redirect()->route('users.index');
     }
 
-    public function destroy(User $users)
+    public function destroy(User $user)
     {
-        if ($users->admission_document) {
-            Storage::disk('public')->delete($users->admission_document);
+        if ($user->admission_document) {
+            Storage::disk('public')->delete($user->admission_document);
         }
-        $users->delete();
+        $user->delete();
+        return redirect()->route('users.index');
+    }
+
+    public function approve(User $user)
+    {
+        $user->update(['status' => true]);
         return redirect()->route('users.index');
     }
 }

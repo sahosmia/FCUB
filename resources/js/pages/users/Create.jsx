@@ -3,10 +3,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import AppLayout from "@/layouts/app-layout";
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
-// custom components
 import SelectForm from "@/components/form/SelectForm";
 import FormField from "@/components/form/form-field";
 import { roles, genders } from "@/constants";
@@ -18,18 +14,15 @@ export default function Create() {
         name: "",
         email: "",
         password: "",
-        status: true,
         role: "student",
         phone: "",
         gender: "",
         date_of_birth: "",
-        course_fee: "",
-        paid_fee: "",
-        due_fee: "",
+        course_fee: "200000",
+        admission_fee: "5000",
         batch_id: "",
         session: "",
         admission_document: "",
-        admission_fee: "",
         student_id: "",
     });
 
@@ -149,35 +142,20 @@ export default function Create() {
                                 />
                             </FormField>
 
-                            {/* Paid Fee */}
+                            {/* Admission Fee */}
                             <FormField
-                                label="Paid Fee"
-                                error={form.errors.paid_fee}
+                                label="Admission Fee"
+                                error={form.errors.admission_fee}
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.paid_fee}
-                                    placeholder="Enter paid fee"
+                                    value={form.data.admission_fee}
+                                    placeholder="Enter admission fee"
                                     onChange={(e) =>
                                         form.setData(
-                                            "paid_fee",
+                                            "admission_fee",
                                             e.target.value
                                         )
-                                    }
-                                />
-                            </FormField>
-
-                            {/* Due Fee */}
-                            <FormField
-                                label="Due Fee"
-                                error={form.errors.due_fee}
-                            >
-                                <Input
-                                    type="number"
-                                    value={form.data.due_fee}
-                                    placeholder="Enter due fee"
-                                    onChange={(e) =>
-                                        form.setData("due_fee", e.target.value)
                                     }
                                 />
                             </FormField>
@@ -231,24 +209,6 @@ export default function Create() {
                                 />
                             </FormField>
 
-                            {/* Admission Fee */}
-                            <FormField
-                                label="Admission Fee"
-                                error={form.errors.admission_fee}
-                            >
-                                <Input
-                                    type="number"
-                                    value={form.data.admission_fee}
-                                    placeholder="Enter admission fee"
-                                    onChange={(e) =>
-                                        form.setData(
-                                            "admission_fee",
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                            </FormField>
-
                             {/* Student ID */}
                             <FormField
                                 label="Student ID"
@@ -277,33 +237,6 @@ export default function Create() {
                                 placeholder="Select Role"
                                 options={roles}
                             />
-
-                            {/* Status */}
-                            <FormField
-                                label="Status"
-                                error={form.errors.status}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id="status"
-                                        checked={Boolean(form.data.status)}
-                                        onCheckedChange={(checked) =>
-                                            form.setData(
-                                                "status",
-                                                checked ? 1 : 0
-                                            )
-                                        }
-                                    />
-                                    <Label
-                                        htmlFor="status"
-                                        className="ml-2 cursor-pointer select-none"
-                                    >
-                                        {form.data.status == 1
-                                            ? "Active"
-                                            : "Inactive"}
-                                    </Label>
-                                </div>
-                            </FormField>
 
                             {/* Actions */}
                             <div className="mt-6 flex justify-end gap-2">

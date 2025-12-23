@@ -22,18 +22,17 @@ export default function Edit({ user }) {
         gender: user.gender || "",
         date_of_birth: user.date_of_birth || "",
         course_fee: user.course_fee || "",
-        paid_fee: user.paid_fee || "",
-        due_fee: user.due_fee || "",
+        admission_fee: user.admission_fee || "",
         batch_id: user.batch_id || "",
         session: user.session || "",
-        admission_document: user.admission_document || "",
-        admission_fee: user.admission_fee || "",
+        admission_document: null,
         student_id: user.student_id || "",
+        _method: "put",
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        form.put(`/users/${user.id}`);
+        form.post(`/users/${user.id}`);
     };
 
     return (
@@ -148,35 +147,20 @@ export default function Edit({ user }) {
                                 />
                             </FormField>
 
-                            {/* Paid Fee */}
+                            {/* Admission Fee */}
                             <FormField
-                                label="Paid Fee"
-                                error={form.errors.paid_fee}
+                                label="Admission Fee"
+                                error={form.errors.admission_fee}
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.paid_fee}
-                                    placeholder="Enter paid fee"
+                                    value={form.data.admission_fee}
+                                    placeholder="Enter admission fee"
                                     onChange={(e) =>
                                         form.setData(
-                                            "paid_fee",
+                                            "admission_fee",
                                             e.target.value
                                         )
-                                    }
-                                />
-                            </FormField>
-
-                            {/* Due Fee */}
-                            <FormField
-                                label="Due Fee"
-                                error={form.errors.due_fee}
-                            >
-                                <Input
-                                    type="number"
-                                    value={form.data.due_fee}
-                                    placeholder="Enter due fee"
-                                    onChange={(e) =>
-                                        form.setData("due_fee", e.target.value)
                                     }
                                 />
                             </FormField>
@@ -225,24 +209,6 @@ export default function Edit({ user }) {
                                         form.setData(
                                             "admission_document",
                                             e.target.files[0]
-                                        )
-                                    }
-                                />
-                            </FormField>
-
-                            {/* Admission Fee */}
-                            <FormField
-                                label="Admission Fee"
-                                error={form.errors.admission_fee}
-                            >
-                                <Input
-                                    type="number"
-                                    value={form.data.admission_fee}
-                                    placeholder="Enter admission fee"
-                                    onChange={(e) =>
-                                        form.setData(
-                                            "admission_fee",
-                                            e.target.value
                                         )
                                     }
                                 />
