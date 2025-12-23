@@ -72,5 +72,11 @@ class User extends Authenticatable
         return $this->belongsTo(Batch::class);
     }
 
-
+    /**
+     * Get the payments for the user.
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

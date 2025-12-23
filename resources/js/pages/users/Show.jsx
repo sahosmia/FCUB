@@ -78,9 +78,16 @@ export default function Show({ user }) {
 
                         {/* Financial Information */}
                         <div className="space-y-3">
-                            <h3 className="text-lg font-semibold">
-                                Financial Information
-                            </h3>
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold">
+                                    Financial Information
+                                </h3>
+                                <Button asChild variant="outline" size="sm">
+                                    <Link href={route('users.payments.index', user.id)}>
+                                        Manage Payments
+                                    </Link>
+                                </Button>
+                            </div>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <DetailItem icon={<DollarSign />} label="Course Fee" value={user.course_fee} />
                                 <DetailItem icon={<DollarSign />} label="Paid Fee" value={user.paid_fee} />

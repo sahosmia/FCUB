@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('courses', CourseController::class);
     Route::resource('users', UserController::class);
     Route::post('users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::resource('users.payments', PaymentController::class)->shallow();
     Route::resource('batches', BatchController::class);
 
 });
