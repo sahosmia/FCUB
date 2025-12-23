@@ -21,8 +21,6 @@ export default function Edit({ user }) {
         phone: user.phone || "",
         gender: user.gender || "",
         date_of_birth: user.date_of_birth || "",
-        course_fee: user.course_fee || "",
-        admission_fee: user.admission_fee || "",
         batch_id: user.batch_id || "",
         session: user.session || "",
         admission_document: null,
@@ -136,14 +134,8 @@ export default function Edit({ user }) {
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.course_fee}
-                                    placeholder="Enter course fee"
-                                    onChange={(e) =>
-                                        form.setData(
-                                            "course_fee",
-                                            e.target.value
-                                        )
-                                    }
+                                    value={user.course_fee}
+                                    readOnly
                                 />
                             </FormField>
 
@@ -154,14 +146,8 @@ export default function Edit({ user }) {
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.admission_fee}
-                                    placeholder="Enter admission fee"
-                                    onChange={(e) =>
-                                        form.setData(
-                                            "admission_fee",
-                                            e.target.value
-                                        )
-                                    }
+                                    value={user.admission_fee}
+                                    readOnly
                                 />
                             </FormField>
 
