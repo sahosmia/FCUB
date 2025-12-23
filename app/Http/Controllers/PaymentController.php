@@ -21,13 +21,6 @@ class PaymentController extends Controller
         });
     }
 
-    public function index(User $user)
-    {
-        return Inertia::render('payments/Index', [
-            'user' => $user,
-            'payments' => $user->payments()->orderBy('payment_date', 'desc')->paginate(10),
-        ]);
-    }
 
     public function create(User $user)
     {
@@ -56,7 +49,8 @@ class PaymentController extends Controller
             'due_fee' => ($user->course_fee + $user->admission_fee) - $user->payments()->sum('amount'),
         ]);
 
-        return redirect()->route('users.payments.index', $user);
+        return redirect()->route('users.show', $user);
+        return redirect()->route('users.show', $user);
     }
 
     public function destroy(Payment $payment)

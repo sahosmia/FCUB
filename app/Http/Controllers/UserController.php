@@ -83,6 +83,7 @@ class UserController extends Controller
     {
         return Inertia::render('users/Show', [
             'user' => $user->load('batch'),
+            'payments' => $user->payments()->orderBy('payment_date', 'desc')->paginate(10),
         ]);
     }
 
