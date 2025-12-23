@@ -101,7 +101,7 @@ class CourseController extends Controller
 
         Course::create($data);
 
-        return redirect()->route('courses.index');
+        return redirect()->route('courses.index')->with('success', 'Course created successfully.');
     }
 
     public function show(Course $course)
@@ -134,12 +134,12 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        return redirect()->route('courses.index');
+        return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
     }
 
     public function destroy(Course $course)
     {
         $course->delete();
-        return redirect()->route('courses.index');
+        return redirect()->route('courses.index')->with('success', 'Course deleted successfully.');
     }
 }

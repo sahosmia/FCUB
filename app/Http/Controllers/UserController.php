@@ -76,7 +76,7 @@ class UserController extends Controller
 
         User::create($data);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     public function show(User $user)
@@ -112,7 +112,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
@@ -121,12 +121,12 @@ class UserController extends Controller
             Storage::disk('public')->delete($user->admission_document);
         }
         $user->delete();
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 
     public function approve(User $user)
     {
         $user->update(['status' => true]);
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User approved successfully.');
     }
 }

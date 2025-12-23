@@ -49,7 +49,7 @@ class PaymentController extends Controller
             'due_fee' => ($user->course_fee + $user->admission_fee) - $user->payments()->sum('amount'),
         ]);
 
-        return redirect()->route('users.show', $user);
+        return redirect()->route('users.show', $user)->with('success', 'Payment added successfully.');
     }
 
     public function destroy(Payment $payment)
@@ -67,6 +67,6 @@ class PaymentController extends Controller
             'due_fee' => ($user->course_fee + $user->admission_fee) - $user->payments()->sum('amount'),
         ]);
 
-        return redirect()->route('users.show', $user);
+        return redirect()->route('users.show', $user)->with('success', 'Payment deleted successfully.');
     }
 }
