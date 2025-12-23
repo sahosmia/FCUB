@@ -87,6 +87,9 @@ export default function Index() {
                                 <TableHead>#</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
+                                <TableHead>Phone</TableHead>
+                                <TableHead>Gender</TableHead>
+                                <TableHead>Student ID</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
@@ -98,6 +101,9 @@ export default function Index() {
                                     <TableCell>{(users.from || 0) + index}</TableCell>
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
+                                    <TableCell>{user.phone}</TableCell>
+                                    <TableCell>{user.gender}</TableCell>
+                                    <TableCell>{user.student_id}</TableCell>
                                     <TableCell>{user.role}</TableCell>
                                     <TableCell>
                                         <StatusBadge

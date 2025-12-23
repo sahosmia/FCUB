@@ -1,34 +1,37 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import AppLayout from "@/layouts/app-layout";
 import { Head, useForm, Link, usePage } from "@inertiajs/react";
-import { semesters } from "@/constants";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-
 // custom components
-import SelectForm from "@/components/Form/SelectForm";
-import FormField from "@/components/Form/form-field";
-import { Check } from "lucide-react";
-import { roles } from "@/constants";
+import SelectForm from "@/components/form/SelectForm";
+import FormField from "@/components/form/form-field";
+import { roles, genders } from "@/constants";
 
 export default function Create() {
-
-    const {users} = usePage().props;
-
+    const { batches } = usePage().props;
 
     const form = useForm({
-        name : "",
-        email : "",
-        password : "",
+        name: "",
+        email: "",
+        password: "",
         status: true,
-        role : "student",
+        role: "student",
+        phone: "",
+        gender: "",
+        date_of_birth: "",
+        course_fee: "",
+        paid_fee: "",
+        due_fee: "",
+        batch_id: "",
+        session: "",
+        admission_document: "",
+        admission_fee: "",
+        student_id: "",
     });
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,12 +50,8 @@ export default function Create() {
 
                     <CardContent>
                         <form onSubmit={handleSubmit}>
-
                             {/* Name */}
-                            <FormField
-                                label="Name"
-                                error={form.errors.name}
-                            >
+                            <FormField label="Name" error={form.errors.name}>
                                 <Input
                                     value={form.data.name}
                                     placeholder="Enter user name"
@@ -63,11 +62,7 @@ export default function Create() {
                             </FormField>
 
                             {/* Email */}
-                            <FormField
-                                label="Email"
-
-                                error={form.errors.email}
-                            >
+                            <FormField label="Email" error={form.errors.email}>
                                 <Input
                                     type="email"
                                     value={form.data.email}
@@ -88,7 +83,185 @@ export default function Create() {
                                     value={form.data.password}
                                     placeholder="Enter user password"
                                     onChange={(e) =>
-                                        form.setData("password", e.target.value)
+                                        form.setData(
+                                            "password",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Phone */}
+                            <FormField label="Phone" error={form.errors.phone}>
+                                <Input
+                                    value={form.data.phone}
+                                    placeholder="Enter phone number"
+                                    onChange={(e) =>
+                                        form.setData("phone", e.target.value)
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Gender */}
+                            <SelectForm
+                                label="Gender"
+                                error={form.errors.gender}
+                                value={form.data.gender}
+                                onValueChange={(value) =>
+                                    form.setData("gender", value)
+                                }
+                                placeholder="Select Gender"
+                                options={genders}
+                            />
+
+                            {/* Date of Birth */}
+                            <FormField
+                                label="Date of Birth"
+                                error={form.errors.date_of_birth}
+                            >
+                                <Input
+                                    type="date"
+                                    value={form.data.date_of_birth}
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "date_of_birth",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Course Fee */}
+                            <FormField
+                                label="Course Fee"
+                                error={form.errors.course_fee}
+                            >
+                                <Input
+                                    type="number"
+                                    value={form.data.course_fee}
+                                    placeholder="Enter course fee"
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "course_fee",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Paid Fee */}
+                            <FormField
+                                label="Paid Fee"
+                                error={form.errors.paid_fee}
+                            >
+                                <Input
+                                    type="number"
+                                    value={form.data.paid_fee}
+                                    placeholder="Enter paid fee"
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "paid_fee",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Due Fee */}
+                            <FormField
+                                label="Due Fee"
+                                error={form.errors.due_fee}
+                            >
+                                <Input
+                                    type="number"
+                                    value={form.data.due_fee}
+                                    placeholder="Enter due fee"
+                                    onChange={(e) =>
+                                        form.setData("due_fee", e.target.value)
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Batch */}
+                            <SelectForm
+                                label="Batch"
+                                error={form.errors.batch_id}
+                                value={form.data.batch_id}
+                                onValueChange={(value) =>
+                                    form.setData("batch_id", value)
+                                }
+                                placeholder="Select Batch"
+                                options={
+                                    batches
+                                        ? batches.map((batch) => ({
+                                              value: batch.id,
+                                              label: batch.name,
+                                          }))
+                                        : []
+                                }
+                            />
+
+                            {/* Session */}
+                            <FormField
+                                label="Session"
+                                error={form.errors.session}
+                            >
+                                <Input
+                                    value={form.data.session}
+                                    placeholder="Enter session"
+                                    onChange={(e) =>
+                                        form.setData("session", e.target.value)
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Admission Document */}
+                            <FormField
+                                label="Admission Document"
+                                error={form.errors.admission_document}
+                            >
+                                <Input
+                                    type="file"
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "admission_document",
+                                            e.target.files[0]
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Admission Fee */}
+                            <FormField
+                                label="Admission Fee"
+                                error={form.errors.admission_fee}
+                            >
+                                <Input
+                                    type="number"
+                                    value={form.data.admission_fee}
+                                    placeholder="Enter admission fee"
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "admission_fee",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </FormField>
+
+                            {/* Student ID */}
+                            <FormField
+                                label="Student ID"
+                                error={form.errors.student_id}
+                            >
+                                <Input
+                                    value={form.data.student_id}
+                                    placeholder="Enter student ID"
+                                    onChange={(e) =>
+                                        form.setData(
+                                            "student_id",
+                                            e.target.value
+                                        )
                                     }
                                 />
                             </FormField>
@@ -115,19 +288,22 @@ export default function Create() {
                                         id="status"
                                         checked={Boolean(form.data.status)}
                                         onCheckedChange={(checked) =>
-                                            form.setData("status", checked ? 1 : 0)
+                                            form.setData(
+                                                "status",
+                                                checked ? 1 : 0
+                                            )
                                         }
                                     />
                                     <Label
                                         htmlFor="status"
                                         className="ml-2 cursor-pointer select-none"
                                     >
-                                        {form.data.status == 1 ? "Active" : "Inactive"}
+                                        {form.data.status == 1
+                                            ? "Active"
+                                            : "Inactive"}
                                     </Label>
                                 </div>
                             </FormField>
-
-
 
                             {/* Actions */}
                             <div className="mt-6 flex justify-end gap-2">
@@ -139,7 +315,9 @@ export default function Create() {
                                     type="submit"
                                     disabled={form.processing}
                                 >
-                                    {form.processing ? "Saving..." : "Save User"}
+                                    {form.processing
+                                        ? "Saving..."
+                                        : "Save User"}
                                 </Button>
                             </div>
                         </form>

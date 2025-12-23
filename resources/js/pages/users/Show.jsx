@@ -1,28 +1,32 @@
-import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import AppLayout from "@/layouts/app-layout";
+import { Head, Link } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CalendarDays, Clock, User, ArrowLeft, Pencil } from 'lucide-react';
+import { ArrowLeft, Pencil, User, Mail, Phone, CalendarDays, KeyRound, Briefcase, FileText, DollarSign, Building, Clock } from "lucide-react";
 
-export default function Show({ course }) {
+export default function Show({ user }) {
     return (
         <AppLayout>
-            <Head title={`Course: ${course.title}`} />
+            <Head title={`User: ${user.name}`} />
 
             <div className="p-6 max-w-4xl mx-auto space-y-6">
-
                 {/* Top Action Bar */}
                 <div className="flex items-center justify-between">
                     <Button variant="ghost" asChild className="gap-2">
-                        <Link href="/courses">
-                            <ArrowLeft className="h-4 w-4" /> Back to Courses
+                        <Link href="/users">
+                            <ArrowLeft className="h-4 w-4" /> Back to Users
                         </Link>
                     </Button>
                     <Button asChild className="gap-2">
-                        <Link href={`/courses/${course.id}/edit`}>
-                            <Pencil className="h-4 w-4" /> Edit Course
+                        <Link href={`/users/${user.id}/edit`}>
+                            <Pencil className="h-4 w-4" /> Edit User
                         </Link>
                     </Button>
                 </div>
@@ -32,62 +36,57 @@ export default function Show({ course }) {
                     <CardHeader className="bg-muted/30 pb-8">
                         <div className="flex justify-between items-start">
                             <div className="space-y-1">
-                                <CardTitle className="text-3xl font-bold">{course.title}</CardTitle>
+                                <CardTitle className="text-3xl font-bold">
+                                    {user.name}
+                                </CardTitle>
                                 <div className="flex items-center text-muted-foreground gap-2">
-                                    <User className="h-4 w-4" />
-                                    <span>Instructor: <span className="font-medium text-foreground">{course.user?.name ?? 'N/A'}</span></span>
+                                    <Mail className="h-4 w-4" />
+                                    <span>{user.email}</span>
                                 </div>
                             </div>
-                            <Badge variant={course.is_active ? "success" : "destructive"} className="px-3 py-1">
-                                {course.is_active ? "Active" : "Inactive"}
+                            <Badge
+                                variant={
+                                    user.status ? "success" : "destructive"
+                                }
+                                className="px-3 py-1"
+                            >
+                                {user.status ? "Active" : "Inactive"}
                             </Badge>
                         </div>
                     </CardHeader>
 
                     <CardContent className="pt-6 space-y-8">
-                        {/* Course Stats Info */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card shadow-sm">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <Clock className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase font-semibold">Duration</p>
-                                    <p className="text-sm font-medium">{course.duration ? `${course.duration} Hours` : '—'}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card shadow-sm">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <CalendarDays className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase font-semibold">Semester</p>
-                                    <p className="text-sm font-medium">{course.semester ?? 'Not Assigned'}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 p-3 rounded-lg border bg-card shadow-sm">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <User className="h-5 w-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase font-semibold">Created By</p>
-                                    <p className="text-sm font-medium">{course.user?.name ?? 'Admin'}</p>
-                                </div>
-                            </div>
+                        {/* User Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <DetailItem icon={<User />} label="Gender" value={user.gender} />
+                            <DetailItem icon={<Phone />} label="Phone" value={user.phone} />
+                            <DetailItem icon={<CalendarDays />} label="Date of Birth" value={user.date_of_birth} />
+                            <DetailItem icon={<KeyRound />} label="Role" value={user.role} />
+                            <DetailItem icon={<Briefcase />} label="Session" value={user.session} />
+                            <DetailItem icon={<FileText />} label="Student ID" value={user.student_id} />
+                            <DetailItem icon={<Building />} label="Batch" value={user.batch?.name} />
+                            {user.admission_document && (
+                                <DetailItem icon={<FileText />} label="Admission Document">
+                                    <a href={`/storage/${user.admission_document}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+                                        View Document
+                                    </a>
+                                </DetailItem>
+                            )}
                         </div>
 
                         <Separator />
 
-                        {/* Description Section */}
+                        {/* Financial Information */}
                         <div className="space-y-3">
-                            <h3 className="text-lg font-semibold flex items-center gap-2">
-                                Course Description
+                            <h3 className="text-lg font-semibold">
+                                Financial Information
                             </h3>
-                            <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                {course.description || "No description provided for this course."}
-                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <DetailItem icon={<DollarSign />} label="Course Fee" value={user.course_fee} />
+                                <DetailItem icon={<DollarSign />} label="Paid Fee" value={user.paid_fee} />
+                                <DetailItem icon={<DollarSign />} label="Due Fee" value={user.due_fee} />
+                                <DetailItem icon={<DollarSign />} label="Admission Fee" value={user.admission_fee} />
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
@@ -95,3 +94,17 @@ export default function Show({ course }) {
         </AppLayout>
     );
 }
+
+const DetailItem = ({ icon, label, value }) => (
+    <div className="flex items-center gap-3">
+        <div className="p-2 bg-primary/10 rounded-full">
+            {icon}
+        </div>
+        <div>
+            <p className="text-xs text-muted-foreground uppercase font-semibold">
+                {label}
+            </p>
+            <p className="text-sm font-medium">{value || "—"}</p>
+        </div>
+    </div>
+);
