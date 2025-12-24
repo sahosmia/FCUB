@@ -11,12 +11,18 @@ const semesters = [
         { value: '25', label: '25' },
         { value: '50', label: '50' },
    ];
-    
+
    const roles = [
         { value: 'admin', label: 'Admin' },
         { value: 'instructor', label: 'Instructor' },
         { value: 'student', label: 'Student' },
    ];
 
+   const genders = [
+       {value: 'male', label: "Male"},
+       {value: 'female', label: "Female"},
+       {value: 'other', label: "Other"},
+   ]
 
-    export { semesters, selectItems, roles };
+
+    export { semesters, selectItems, roles, genders };

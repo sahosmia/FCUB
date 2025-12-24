@@ -24,4 +24,12 @@ class Course extends Model
         return $this->belongsTo(User::class);
     }
 
+      /**
+     * The users that are enrolled in the course.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
 }
