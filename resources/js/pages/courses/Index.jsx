@@ -2,18 +2,16 @@ import { selectItems, semesters } from '@/constants';
 import { useTableFilters } from '@/hooks/useTableFilters';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CheckCircle, Users } from 'lucide-react';
 import { useEffect } from 'react';
 
 // Custom Components
 import GenericActionMenu from '@/components/DataTable/GenericActionMenu';
 import Pagination from '@/components/DataTable/Pagination';
-import StatusBadge from '@/components/DataTable/StatusBadge';
+import { toast } from 'sonner';
 
 // Shadcn components
 import SelectForm from '@/components/form/SelectForm';
 import { Button } from '@/components/ui/button';
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
     Table,
@@ -28,7 +26,7 @@ export default function Index() {
     const {
         courses = {},
         filters: serverFilters = {},
-        users = [],
+        flash,
     } = usePage().props;
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
@@ -39,8 +37,21 @@ export default function Index() {
             limit: serverFilters.limit ?? 10,
             is_active: serverFilters.is_active ?? '',
             semester: serverFilters.semester ?? '',
-            user_id: serverFilters.user_id ?? '',
         });
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success, {
+                id: 'success-toast',
+            });
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error, {
+                id: 'error-toast',
+            });
+        }
+    }, [flash]);
 
     // Debounce search effect (ekhaneo rakha jay ba hook-e neya jay)
     useEffect(() => {
@@ -88,14 +99,6 @@ export default function Index() {
                             items: selectItems,
                         },
                         {
-                            key: 'user_id',
-                            placeholder: 'Filter by User',
-                            items: users.map((u) => ({
-                                label: u.name,
-                                value: String(u.id),
-                            })),
-                        },
-                        {
                             key: 'semester',
                             placeholder: 'Semester',
                             items: semesters,
@@ -120,8 +123,9 @@ export default function Index() {
                             <TableRow>
                                 <TableHead>#</TableHead>
                                 <TableHead>Title</TableHead>
-                                <TableHead>User</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>Code</TableHead>
+                                <TableHead>Credit</TableHead>
+                                <TableHead>Semester</TableHead>
                                 <TableHead className="text-right">
                                     Actions
                                 </TableHead>
@@ -136,36 +140,16 @@ export default function Index() {
                                     <TableCell className="font-medium">
                                         {course.title}
                                     </TableCell>
-                                    <TableCell>{course.user.name}</TableCell>
-                                    <TableCell>
-                                        <StatusBadge
-                                            active={course.is_active}
-                                        />
-                                    </TableCell>
+                                    <TableCell>{course.code}</TableCell>
+                                    <TableCell>{course.credit}</TableCell>
+                                    <TableCell>{course.semester}</TableCell>
+
                                     <TableCell className="text-right">
                                         <GenericActionMenu
                                             resource="courses"
                                             id={course.id}
-                                        >
-                                            {/* Extra New Menu */}
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    handleApprove(course.id)
-                                                }
-                                            >
-                                                <CheckCircle className="mr-2 h-4 w-4" />{' '}
-                                                Approve Course
-                                            </DropdownMenuItem>
-
-                                            <DropdownMenuItem asChild>
-                                                <Link
-                                                    href={`/courses/${course.id}/students`}
-                                                >
-                                                    <Users className="mr-2 h-4 w-4" />{' '}
-                                                    View Students
-                                                </Link>
-                                            </DropdownMenuItem>
-                                        </GenericActionMenu>
+                                            actions={['edit', 'delete']}
+                                        ></GenericActionMenu>
                                     </TableCell>
                                 </TableRow>
                             ))}

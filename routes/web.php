@@ -9,8 +9,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-
-
+use App\Http\Controllers\RoutineController;
+use App\Http\Controllers\ResultController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -26,7 +26,7 @@ Route::get('/about', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-        Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -37,9 +37,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('payments', PaymentController::class);
 
     // Route::middleware(['auth', 'role:admin'])->group(function () {
-        Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
-        Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+    Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
+    Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
     // });
+
+    // Student + Admin (View)
+    Route::get('/routines', [RoutineController::class, 'index'])
+        ->name('routines.index');
+
+    // Admin Only
+
+    Route::get('/routines/create', [RoutineController::class, 'create'])
+        ->name('routines.create');
+
+    Route::post('/routines', [RoutineController::class, 'store'])
+        ->name('routines.store');
+
+    // Student + Admin (View) Result
+    Route::get('/results', [ResultController::class, 'index'])
+        ->name('results.index');
+
+    // Admin Only
+
+    Route::get('/results/create', [ResultController::class, 'create'])
+        ->name('results.create');
+
+    Route::post('/results', [ResultController::class, 'store'])
+        ->name('results.store');
 
 
     // Users
