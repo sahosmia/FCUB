@@ -21,7 +21,7 @@ export default function Edit({ payment, users }) {
         post(`/payments/${payment.id}`);
     };
 
-    const canEdit = auth.user.role === 'admin' || (auth.user.role === 'student' && payment.status === 'pending');
+    const canEdit = auth.user.role === 'admin' || (auth.user.role === 'student' && payment.status !== 'approved');
 
     return (
         <AppLayout>

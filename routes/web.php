@@ -38,7 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
-        Route::post('payments/{payment}/rejected', [PaymentController::class, 'rejected'])->name('payments.reject');
+        Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
     // });
 
 

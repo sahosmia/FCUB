@@ -14,6 +14,7 @@ import {
     Edit3, FileText, Download
 } from 'lucide-react';
 import { useState } from 'react';
+import { CardFooter } from '../../components/ui/card';
 
 export default function Show({ payment }) {
     const { auth } = usePage().props;
@@ -40,7 +41,7 @@ export default function Show({ payment }) {
                 description: 'This will update student fees.',
                 variant: 'default',
             };
-        } else if (type === 'rejected') {
+        } else if (type === 'reject') {
             config = {
                 ...config,
                 title: 'Reject Payment?',
@@ -166,12 +167,15 @@ export default function Show({ payment }) {
                         </div>
 
                         {/* Action Buttons Section */}
-                        <div className="flex justify-end gap-3 border-t pt-6">
+
+                    </CardContent>
+                    <CardFooter>
+                        <div className="flex justify-end gap-3  pt-6">
 
                             {/* Admin Actions: Only for Pending */}
                             {userRole === 'admin' && payment.status === 'pending' && (
                                 <>
-                                    <Button variant="outline" className="text-red-600" onClick={() => openConfirm('rejected')}>
+                                    <Button variant="outline" className="text-red-600" onClick={() => openConfirm('reject')}>
                                         <XCircle className="mr-2 h-4 w-4" /> Reject
                                     </Button>
                                     <Button className="bg-green-600 hover:bg-green-700" onClick={() => openConfirm('approve')}>
@@ -195,7 +199,7 @@ export default function Show({ payment }) {
                                 </>
                             )}
                         </div>
-                    </CardContent>
+                    </CardFooter>
                 </Card>
             </div>
 

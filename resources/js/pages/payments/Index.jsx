@@ -88,7 +88,7 @@ export default function Index() {
     };
 
     const handleReject = (id) => {
-        router.post(`/payments/${id}/rejected`);
+        router.post(`/payments/${id}/reject`);
     };
 
     const getActions = (userRole, payment) => {
