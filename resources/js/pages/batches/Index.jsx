@@ -98,49 +98,7 @@ export default function Index() {
                         />
                     ))}
                 </div>
-
-                {/* Table Section */}
-                <div className="overflow-hidden rounded-lg border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>#</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead className="text-right">
-                                    Actions
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {batches.data.length > 0 ? (
-                                batches.data.map((batch, index) => (
-                                    <TableRow key={batch.id}>
-                                        <TableCell>
-                                            {(batches.from || 0) + index}
-                                        </TableCell>
-                                        <TableCell>{batch.title}</TableCell>
-                                        <TableCell className="text-right">
-                                            <GenericActionMenu
-                                                resource="batches"
-                                                id={batch.id}
-                                                actions={['edit', 'delete']}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={3}
-                                        className="h-24 text-center text-muted-foreground"
-                                    >
-                                        No batches found.
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+g
                 <Pagination paginator={batches} />
             </div>
         </AppLayout>

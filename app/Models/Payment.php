@@ -15,6 +15,7 @@ class Payment extends Model
         'receipt',
         'payment_date',
         'semester',
+        'status'
     ];
 
     public function user()

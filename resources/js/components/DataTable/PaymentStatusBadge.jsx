@@ -3,7 +3,7 @@ const PaymentStatusBadge = ({ status }) => {
     const statusStyles = {
         approved: 'bg-green-100 text-green-800 border-green-200',
         pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-        rejected: 'bg-red-100 text-red-800 border-red-200',
+        reject: 'bg-red-100 text-red-800 border-red-200',
     };
 
     // Text Formate like [rejected => Rejected]

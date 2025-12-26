@@ -6,109 +6,126 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-export default function Create({ users }) {
+export default function Edit({ payment, users }) {
     const { auth } = usePage().props;
-    // const defaultAmount = (user.course_fee / 8).toFixed(2);
-    const defaultAmount = 2000;
-
-    const form = useForm({
-        amount: defaultAmount,
+    const { data, setData, post, processing, errors } = useForm({
+        amount: payment.amount || '',
         receipt: null,
-        payment_date: new Date().toISOString().slice(0, 10),
-        user_id: '',
+        payment_date: payment.payment_date || new Date().toISOString().slice(0, 10),
+        user_id: payment.user_id || '',
+        _method: 'put',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('aa');
-
-        form.post('/payments');
+        post(`/payments/${payment.id}`);
     };
+
+    const canEdit = auth.user.role === 'admin' || (auth.user.role === 'student' && payment.status !== 'approved');
 
     return (
         <AppLayout>
-            <Head title={`Add Payment for ${auth.name}`} />
+            <Head title={`Edit Payment`} />
             <div className="flex justify-center p-4">
                 <Card className="w-full max-w-2xl p-4">
                     <CardHeader>
-                        <CardTitle>Add Payment for {auth.name}</CardTitle>
+                        <CardTitle>Edit Payment for {payment.user.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit}>
                             {auth.user.role === 'admin' && (
                                 <SelectForm
                                     label="User"
-                                    error={form.errors.user_id}
-                                    value={form.data.user_id?.toString()} // ভ্যালু স্ট্রিং হিসেবে পাঠানো ভালো
+                                    error={errors.user_id}
+                                    value={data.user_id?.toString()}
                                     onValueChange={(value) =>
-                                        form.setData('user_id', value)
+                                        setData('user_id', value)
                                     }
                                     placeholder="Select User"
                                     options={
                                         users?.map((user) => ({
-                                            value: user.id.toString(), // ID কে স্ট্রিং-এ রূপান্তর করুন
+                                            value: user.id.toString(),
                                             label: user.name,
                                         })) || []
                                     }
+                                    disabled={!canEdit}
                                 />
                             )}
 
                             <FormField
                                 label="Amount"
-                                error={form.errors.amount}
+                                error={errors.amount}
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.amount}
+                                    value={data.amount}
                                     onChange={(e) =>
-                                        form.setData('amount', e.target.value)
+                                        setData('amount', e.target.value)
                                     }
+                                    disabled={!canEdit}
                                 />
                             </FormField>
 
                             <FormField
                                 label="Payment Date"
-                                error={form.errors.payment_date}
+                                error={errors.payment_date}
                             >
                                 <Input
                                     type="date"
-                                    value={form.data.payment_date}
+                                    value={data.payment_date}
                                     onChange={(e) =>
-                                        form.setData(
+                                        setData(
                                             'payment_date',
                                             e.target.value,
                                         )
                                     }
+                                    disabled={!canEdit}
                                 />
                             </FormField>
 
                             <FormField
-                                label="Receipt"
-                                error={form.errors.receipt}
+                                label="New Receipt"
+                                error={errors.receipt}
                             >
                                 <Input
                                     type="file"
                                     onChange={(e) =>
-                                        form.setData(
+                                        setData(
                                             'receipt',
                                             e.target.files[0],
                                         )
                                     }
+                                    disabled={!canEdit}
                                 />
                             </FormField>
+
+                            {payment.receipt && (
+                                <div className="mt-4">
+                                    <a
+                                        href={`/storage/${payment.receipt}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        View Current Receipt
+                                    </a>
+                                </div>
+                            )}
 
                             <div className="mt-6 flex justify-end gap-2">
                                 <Button asChild variant="outline">
                                     <Link href="/payments">Cancel</Link>
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    disabled={form.processing}
-                                >
-                                    {form.processing
-                                        ? 'Saving...'
-                                        : 'Save Payment'}
-                                </Button>
+                                {canEdit && (
+                                    <Button
+                                        type="submit"
+                                        disabled={processing}
+                                    >
+                                        {processing
+                                            ? 'Updating...'
+                                            : 'Update Payment'}
+                                    </Button>
+                                )}
                             </div>
                         </form>
                     </CardContent>

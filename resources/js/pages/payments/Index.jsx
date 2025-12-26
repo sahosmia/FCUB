@@ -1,13 +1,11 @@
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
 import { selectItems } from '@/constants';
 import { useTableFilters } from '@/hooks/useTableFilters';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { CheckCircle } from 'lucide-react';
-import { useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign } from 'lucide-react';
+import { CheckCircle, DollarSign, Pencil, Trash2, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { roles } from '@/constants';
 import { toast } from 'sonner';
 
 // Custom Components
@@ -17,6 +15,7 @@ import Pagination from '@/components/DataTable/Pagination';
 // Shadcn components
 import SelectForm from '@/components/form/SelectForm';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
@@ -35,7 +34,13 @@ export default function Index() {
         payments = {},
         filters: serverFilters = {},
         flash,
+        auth,
     } = usePage().props;
+
+    const [confirmConfig, setConfirmConfig] = useState({
+        open: false,
+        id: null,
+    });
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
         useTableFilters({
@@ -73,6 +78,67 @@ export default function Index() {
         router.post(`/payments/${id}/approve`);
     };
 
+    const handleDelete = (id) => {
+        setConfirmConfig({ open: true, id });
+    };
+
+    const handleConfirmDelete = () => {
+        router.delete(`/payments/${confirmConfig.id}`, {
+            onSuccess: () => setConfirmConfig({ open: false, id: null }),
+        });
+    };
+
+    const handleReject = (id) => {
+        router.post(`/payments/${id}/reject`);
+    };
+
+    const getActions = (userRole, payment) => {
+        const studentAction =
+            userRole === 'student' && payment.status !== 'approved';
+        const adminAction =
+            userRole === 'admin' && payment.status === 'pending';
+
+        return (
+            <>
+                {studentAction && (
+                    <>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/payments/${payment.id}/edit`}
+                                className="flex cursor-pointer items-center text-blue-600"
+                            >
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={() => handleDelete(payment.id)}
+                            className="flex cursor-pointer items-center text-red-600 focus:bg-red-50 focus:text-red-600"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                    </>
+                )}
+                {adminAction && (
+                    <>
+                        <DropdownMenuItem
+                            onClick={() => handleApprove(payment.id)}
+                        >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Approve Payment
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => handleReject(payment.id)}
+                            className="flex cursor-pointer items-center text-red-600 focus:bg-red-50 focus:text-red-600"
+                        >
+                            <XCircle className="mr-2 h-4 w-4" /> Reject
+                        </DropdownMenuItem>
+                    </>
+                )}
+            </>
+        );
+    };
+
     return (
         <AppLayout>
             <Head title="Payments" />
@@ -87,52 +153,88 @@ export default function Index() {
 
                 {/* Summary Cards */}
                 <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
-                     <StatCard icon={<DollarSign />} title="Total Payable" value='200000' />
-                            <StatCard icon={<DollarSign />} title="Paid Fee" value='150000' />
-                            <StatCard icon={<DollarSign />} title="Due Fee" value='50000' />
+                    <StatCard
+                        icon={<DollarSign />}
+                        title="Total Payable"
+                        value="200000"
+                    />
+                    <StatCard
+                        icon={<DollarSign />}
+                        title="Paid Fee"
+                        value="150000"
+                    />
+                    <StatCard
+                        icon={<DollarSign />}
+                        title="Due Fee"
+                        value="50000"
+                    />
                 </div>
 
-                  {/* Fees Information */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="bg-gray-400 text-white px-6 py-3 uppercase text-sm flex items-center gap-2">
-          <span>🔶</span>
-          <span>Fees Information</span>
-        </div>
+                {/* Fees Information */}
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+                    <div className="flex items-center gap-2 bg-gray-400 px-6 py-3 text-sm text-white uppercase">
+                        <span>🔶</span>
+                        <span>Fees Information</span>
+                    </div>
 
-        <div className="p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-sm text-gray-700">Title</th>
-                  <th className="text-right py-3 px-4 text-sm text-gray-700">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm text-gray-900">Admission Fee</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">5,500.00 BDT</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm text-gray-900">Course Fee (Total)</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">130,000.00 BDT</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm text-gray-900">Semester Fee</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">15,250.00 BDT × 8 semester(s)</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm text-gray-900">Monthly Equivalent</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">2,709.00 BDT approx.</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm text-gray-900">Payment Term</td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">Monthly/Semester</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                    <div className="p-6">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-gray-200">
+                                        <th className="px-4 py-3 text-left text-sm text-gray-700">
+                                            Title
+                                        </th>
+                                        <th className="px-4 py-3 text-right text-sm text-gray-700">
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                            Admission Fee
+                                        </td>
+                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            5,500.00 BDT
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                            Course Fee (Total)
+                                        </td>
+                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            130,000.00 BDT
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                            Semester Fee
+                                        </td>
+                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            15,250.00 BDT × 8 semester(s)
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                            Monthly Equivalent
+                                        </td>
+                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            2,709.00 BDT approx.
+                                        </td>
+                                    </tr>
+                                    <tr className="border-b border-gray-100">
+                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                            Payment Term
+                                        </td>
+                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            Monthly/Semester
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <h2 className="text-lg font-semibold">Payment Records</h2>
@@ -162,7 +264,11 @@ export default function Index() {
                             placeholder: 'Limit',
                             items: selectItems,
                         },
-                        { key: 'status', placeholder: 'Status', items: paymentStatus },
+                        {
+                            key: 'status',
+                            placeholder: 'Status',
+                            items: paymentStatus,
+                        },
                     ].map((config) => (
                         <SelectForm
                             key={config.key}
@@ -235,17 +341,9 @@ export default function Index() {
                                             actions={['view']}
                                         >
                                             {/* Extra New Menu */}
-                                            {!payment.status && (
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        handleApprove(
-                                                            payment.id,
-                                                        )
-                                                    }
-                                                >
-                                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                                    Approve Payment
-                                                </DropdownMenuItem>
+                                            {getActions(
+                                                auth.user.role,
+                                                payment,
                                             )}
                                         </GenericActionMenu>
                                     </TableCell>
@@ -256,6 +354,17 @@ export default function Index() {
                 </div>
                 <Pagination paginator={payments} />
             </div>
+
+            <ConfirmDialog
+                isOpen={confirmConfig.open}
+                onOpenChange={(open) =>
+                    setConfirmConfig({ ...confirmConfig, open })
+                }
+                onConfirm={handleConfirmDelete}
+                title="Delete Payment"
+                description="Are you sure you want to delete this payment? This action cannot be undone."
+                variant="destructive"
+            />
         </AppLayout>
     );
 }
