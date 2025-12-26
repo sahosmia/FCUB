@@ -1,8 +1,12 @@
 const semesters = [
-    { value: 'spring', label: 'Spring' },
-    { value: 'summer', label: 'Summer' },
-    { value: 'fall', label: 'Fall' },
-    { value: 'winter', label: 'Winter' },
+    { value: '1', label: '1st Semester' },
+    { value: '2', label: '2nd Semester' },
+    { value: '3', label: '3rd Semester' },
+    { value: '4', label: '4th Semester' },
+    { value: '5', label: '5th Semester' },
+    { value: '6', label: '6th Semester' },
+    { value: '7', label: '7th Semester' },
+    { value: '8', label: '8th Semester' },
 ];
 
    const selectItems = [
@@ -11,12 +15,25 @@ const semesters = [
         { value: '25', label: '25' },
         { value: '50', label: '50' },
    ];
-    
+
    const roles = [
         { value: 'admin', label: 'Admin' },
         { value: 'instructor', label: 'Instructor' },
         { value: 'student', label: 'Student' },
    ];
 
+   const genders = [
+       {value: 'male', label: "Male"},
+       {value: 'female', label: "Female"},
+       {value: 'other', label: "Other"},
+   ];
 
-    export { semesters, selectItems, roles };
+const paymentStatus = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' },
+
+   ]
+
+
+    export { semesters, selectItems, roles, genders, paymentStatus };

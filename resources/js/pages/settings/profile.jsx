@@ -84,6 +84,45 @@ export default function Profile({
                                         message={errors.email}
                                     />
                                 </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="phone">Phone Number</Label>
+
+                                    <Input
+                                        id="phone"
+                                        type="phone"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.phone}
+                                        name="phone"
+                                        required
+                                        autoComplete="username"
+                                        placeholder="Phone Number"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.phone}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="gender">Gender</Label>
+
+                                    <Input
+                                        id="gender"
+                                        type="text"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.gender}
+                                        name="gender"
+                                        required
+                                        autoComplete="username"
+                                        placeholder="Gender"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.gender}
+                                    />
+                                </div>
+
 
                                 {mustVerifyEmail &&
                                     auth.user.email_verified_at === null && (

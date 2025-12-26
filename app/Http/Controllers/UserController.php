@@ -2,96 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Batch;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
-   public function index(Request $request)
-{
-   
-    $search  = $request->string('search')->toString();
-    $sortBy  = $request->input('sort_by', 'created_at');
-    $sortDir = $request->input('sort_dir', 'desc');
-    $limit   = (int) $request->input('limit', 10);
+    public function index(Request $request)
+    {
 
-    /**
-     * Base query for Users
-     *
-     */
-    $query = User::query();
+        $search = $request->string('search')->toString();
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortDir = $request->input('sort_dir', 'desc');
+        $limit = (int) $request->input('limit', 10);
 
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
-        });
+
+        $query = User::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // apply semester filter if provided
+        if ($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
+
+
+        // Apply filter for active users only if provided
+        if ($request->filled('status')) {
+            $isActive = filter_var($request->input('status'), FILTER_VALIDATE_BOOLEAN);
+            $query->where('status', $isActive);
+        }
+
+        $allowedSort = ['name', 'created_at'];
+        if (!in_array($sortBy, $allowedSort)) {
+            $sortBy = 'created_at';
+        }
+
+        $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
+
+        $users = $query->paginate($limit)->appends($request->query());
+
+        // return $users;
+        return Inertia::render('users/Index', [
+            'users' => $users,
+            'filters' => [
+                'search'   => $search,
+                'sort_by'  => $sortBy,
+                'sort_dir' => $sortDir,
+                'limit'    => $limit,
+            ],
+        ]);
     }
-
-    // apply semester filter if provided
-    if ($request->filled('role')) {
-        $query->where('role', $request->input('role'));
-    }
-
-  
-
-    // Apply filter for active users only if provided
-    if ($request->filled('status')) {
-        $isActive = filter_var($request->input('status'), FILTER_VALIDATE_BOOLEAN);
-        $query->where('status', $isActive);
-    }
-    
-    $allowedSort = ['name', 'created_at'];
-    if (!in_array($sortBy, $allowedSort)) {
-        $sortBy = 'created_at';
-    }
-
-    $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
-
-    $users = $query->paginate($limit)->appends($request->query()); // Keeps URL params in pagination links
-
-    return Inertia::render('users/Index', [
-        'users' => $users,
-        'filters' => [
-            'search'   => $search,
-            'sort_by'  => $sortBy,
-            'sort_dir' => $sortDir,
-            'limit'    => $limit,
-        ],
-    ]);
-}
-
-
-
 
     public function create()
     {
         return Inertia::render('users/Create', [
+                        'batches' => Batch::get(),
+
         ]);
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|string|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|string|in:admin,student',
-            'status' => 'nullable|boolean',
-        ]);
+        $data = $request->validated();
+
+        $data['status'] = false; // Default to pending
+        $data['due_fee'] = ($data['course_fee'] + $data['admission_fee']) - ($data['paid_fee'] ?? 0);
+
+        if ($request->hasFile('admission_document')) {
+            $data['admission_document'] = $request->file('admission_document')->store('documents', 'public');
+        }
 
         User::create($data);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     public function show(User $user)
     {
-
         return Inertia::render('users/Show', [
-            'user' => $user,
+            'user' => $user->load('batch'),
+            'payments' => $user->payments()->orderBy('payment_date', 'desc')->paginate(10),
         ]);
     }
 
@@ -99,31 +99,44 @@ class UserController extends Controller
     {
         return Inertia::render('users/Edit', [
             'user' => $user,
+                        'batches' => Batch::get(),
+
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(UserRequest $request, User $user)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'nullable|string|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|string|in:admin,student',
-            'status' => 'nullable|boolean',
-        ]);
+                $data = $request->validated();
+
 
         if (empty($data['password'])) {
             unset($data['password']);
         }
-        
+
+        if ($request->hasFile('admission_document')) {
+            if ($user->admission_document) {
+                Storage::disk('public')->delete($user->admission_document);
+            }
+            $data['admission_document'] = $request->file('admission_document')->store('documents', 'public');
+        }
+
         $user->update($data);
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-    public function destroy(User $users)
+    public function destroy(User $user)
     {
-        $users->delete();
-        return redirect()->route('users.index');
+         if ($user->admission_document) {
+            Storage::disk('public')->delete($user->admission_document);
+        }
+        $user->delete();
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function approve(User $user)
+    {
+        $user->update(['status' => true]);
+        return redirect()->route('users.index')->with('success', 'User approved successfully.');
     }
 }
