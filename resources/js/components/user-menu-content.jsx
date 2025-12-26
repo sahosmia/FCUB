@@ -9,7 +9,7 @@ import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, User } from 'lucide-react';
 
 
 
@@ -30,6 +30,17 @@ export function UserMenuContent({ user }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link
+                        className="block w-full"
+                        href="/profile"
+                        prefetch
+                        onClick={cleanup}
+                    >
+                        <User className="mr-2" />
+                        Profile
+                    </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link
                         className="block w-full"
@@ -42,6 +53,7 @@ export function UserMenuContent({ user }) {
                         Settings
                     </Link>
                 </DropdownMenuItem>
+
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

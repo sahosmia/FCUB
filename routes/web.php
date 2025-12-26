@@ -8,6 +8,8 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
+
 
 
 Route::get('/', function () {
@@ -23,6 +25,9 @@ Route::get('/about', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+        Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // courses
@@ -31,10 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Payments
     Route::resource('payments', PaymentController::class);
 
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
         Route::post('payments/{payment}/rejected', [PaymentController::class, 'rejected'])->name('payments.reject');
-    });
+    // });
 
 
     // Users
