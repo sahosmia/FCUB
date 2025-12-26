@@ -58,7 +58,7 @@ class PaymentController extends Controller
         // Base validation
         $rules = [
             'amount' => 'required|numeric|min:0',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'receipt' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'payment_date' => 'required|date',
         ];
 
@@ -139,9 +139,10 @@ public function edit(Payment $payment)
     ];
 
     // Admin can change user
-    if ($user->role === 'admin') {
-        $rules['user_id'] = 'required|exists:users,id';
-    }
+    // if ($user->role === 'admin') {
+    //     $rules['user_id'] = 'required|exists:users,id';
+    // }
+
 
     $data = $request->validate($rules);
 
@@ -160,6 +161,7 @@ public function edit(Payment $payment)
     // Student cannot change user_id
     if ($user->role === 'student') {
         $data['user_id'] = $payment->user_id;
+        $data['status'] = "pending";
     }
 
     $payment->update($data);
@@ -172,7 +174,6 @@ public function edit(Payment $payment)
 
     public function destroy(Payment $payment)
     {
-        $user = Auth::user();
 
         if ($payment->receipt) {
             Storage::disk('public')->delete($payment->receipt);
@@ -182,7 +183,7 @@ public function edit(Payment $payment)
 
 
 
-        return redirect()->route('payments.index', $user)->with('success', 'Payment deleted successfully.');
+        return redirect()->route('payments.index')->with('success', 'Payment deleted successfully.');
     }
 
     public function approve(Payment $payment)

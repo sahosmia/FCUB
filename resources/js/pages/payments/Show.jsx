@@ -11,7 +11,7 @@ import {
     User,
     XCircle,
     Trash2,
-    Edit3
+    Edit3, FileText, Download
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -26,28 +26,54 @@ export default function Show({ payment }) {
         variant: 'default',
     });
 
-    const openConfirm = (type) => {
-        const isApprove = type === 'approve';
-        setConfirmConfig({
+     const openConfirm = (type) => {
+        let config = {
             open: true,
             type: type,
-            title: isApprove ? 'Approve Payment?' : 'Reject Payment?',
-            description: isApprove
-                ? 'This will update student fees.'
-                : 'This will mark the payment as invalid.',
-            variant: isApprove ? 'default' : 'destructive',
-        });
+            variant: 'destructive',
+        };
+
+        if (type === 'approve') {
+            config = {
+                ...config,
+                title: 'Approve Payment?',
+                description: 'This will update student fees.',
+                variant: 'default',
+            };
+        } else if (type === 'rejected') {
+            config = {
+                ...config,
+                title: 'Reject Payment?',
+                description: 'This will mark the payment as invalid.',
+            };
+        } else if (type === 'delete') {
+            config = {
+                ...config,
+                title: 'Delete Payment Request?',
+                description:
+                    'Are you sure you want to delete this payment request? This action cannot be undone.',
+            };
+        }
+        setConfirmConfig(config);
     };
 
     const handleAction = () => {
-        router.post(
-            `/payments/${payment.id}/${confirmConfig.type}`,
-            {},
-            {
+        const { type } = confirmConfig;
+        if (type === 'delete') {
+            router.delete(`/payments/${payment.id}`, {
                 onSuccess: () =>
                     setConfirmConfig({ ...confirmConfig, open: false }),
-            },
-        );
+            });
+        } else {
+            router.post(
+                `/payments/${payment.id}/${type}`,
+                {},
+                {
+                    onSuccess: () =>
+                        setConfirmConfig({ ...confirmConfig, open: false }),
+                },
+            );
+        }
     };
 
     return (
@@ -107,6 +133,36 @@ export default function Show({ payment }) {
                                     </span>
                                 </p>
                             </div>
+                        </div>
+
+                        {/* Receipt Section */}
+                        <div className="space-y-4 bg-muted/20 p-6 rounded-xl border border-dashed">
+                            <h3 className="text-lg font-semibold flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-primary" /> Payment Receipt
+                            </h3>
+
+                            {payment.receipt ? (
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="bg-primary/10 p-3 rounded-lg text-primary">
+                                            <FileText className="h-8 w-8" />
+                                        </div>
+                                        <div>
+                                            <p className="font-medium">receipt_document.pdf</p>
+                                            <p className="text-sm text-muted-foreground">Click to view or download the proof of payment</p>
+                                        </div>
+                                    </div>
+                                    <Button asChild>
+                                        <a href={`/storage/${payment.receipt}`} target="_blank" className="gap-2">
+                                            <Download className="h-4 w-4" /> View Receipt
+                                        </a>
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="text-center py-6 text-muted-foreground italic">
+                                    No receipt uploaded for this transaction.
+                                </div>
+                            )}
                         </div>
 
                         {/* Action Buttons Section */}

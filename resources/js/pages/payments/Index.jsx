@@ -1,11 +1,11 @@
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
 import { selectItems } from '@/constants';
 import { useTableFilters } from '@/hooks/useTableFilters';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { CheckCircle } from 'lucide-react';
-import { useEffect } from 'react';
+import { CheckCircle, Pencil, Trash2, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { roles } from '@/constants';
 import { toast } from 'sonner';
 
 // Custom Components
@@ -33,7 +33,13 @@ export default function Index() {
         payments = {},
         filters: serverFilters = {},
         flash,
+        auth,
     } = usePage().props;
+
+    const [confirmConfig, setConfirmConfig] = useState({
+        open: false,
+        id: null,
+    });
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
         useTableFilters({
@@ -69,6 +75,67 @@ export default function Index() {
 
     const handleApprove = (id) => {
         router.post(`/payments/${id}/approve`);
+    };
+
+    const handleDelete = (id) => {
+        setConfirmConfig({ open: true, id });
+    };
+
+    const handleConfirmDelete = () => {
+        router.delete(`/payments/${confirmConfig.id}`, {
+            onSuccess: () => setConfirmConfig({ open: false, id: null }),
+        });
+    };
+
+    const handleReject = (id) => {
+        router.post(`/payments/${id}/rejected`);
+    };
+
+    const getActions = (userRole, payment) => {
+        const studentAction =
+            userRole === 'student' && payment.status !== 'approved';
+        const adminAction =
+            userRole === 'admin' && payment.status === 'pending';
+
+        return (
+            <>
+                {studentAction && (
+                    <>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                href={`/payments/${payment.id}/edit`}
+                                className="flex cursor-pointer items-center text-blue-600"
+                            >
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                            </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={() => handleDelete(payment.id)}
+                            className="flex cursor-pointer items-center text-red-600 focus:bg-red-50 focus:text-red-600"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                    </>
+                )}
+                {adminAction && (
+                    <>
+                        <DropdownMenuItem
+                            onClick={() => handleApprove(payment.id)}
+                        >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Approve Payment
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => handleReject(payment.id)}
+                            className="flex cursor-pointer items-center text-red-600 focus:bg-red-50 focus:text-red-600"
+                        >
+                            <XCircle className="mr-2 h-4 w-4" /> Reject
+                        </DropdownMenuItem>
+                    </>
+                )}
+            </>
+        );
     };
 
     return (
@@ -107,7 +174,11 @@ export default function Index() {
                             placeholder: 'Limit',
                             items: selectItems,
                         },
-                        { key: 'status', placeholder: 'Status', items: paymentStatus },
+                        {
+                            key: 'status',
+                            placeholder: 'Status',
+                            items: paymentStatus,
+                        },
                     ].map((config) => (
                         <SelectForm
                             key={config.key}
@@ -180,17 +251,9 @@ export default function Index() {
                                             actions={['view']}
                                         >
                                             {/* Extra New Menu */}
-                                            {!payment.status && (
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        handleApprove(
-                                                            payment.id,
-                                                        )
-                                                    }
-                                                >
-                                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                                    Approve Payment
-                                                </DropdownMenuItem>
+                                            {getActions(
+                                                auth.user.role,
+                                                payment,
                                             )}
                                         </GenericActionMenu>
                                     </TableCell>
@@ -201,6 +264,17 @@ export default function Index() {
                 </div>
                 <Pagination paginator={payments} />
             </div>
+
+            <ConfirmDialog
+                isOpen={confirmConfig.open}
+                onOpenChange={(open) =>
+                    setConfirmConfig({ ...confirmConfig, open })
+                }
+                onConfirm={handleConfirmDelete}
+                title="Delete Payment"
+                description="Are you sure you want to delete this payment? This action cannot be undone."
+                variant="destructive"
+            />
         </AppLayout>
     );
 }
