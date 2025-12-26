@@ -10,11 +10,16 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, User } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, DollarSign, Folder, LayoutGrid, User } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems = [
+
+
+export function AppSidebar() {
+    const { auth } = usePage().props;
+    const userRole = auth.user.role;
+    const mainNavItems = [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -22,25 +27,32 @@ const mainNavItems = [
     },
     {
         title: 'Courses',
-        href:  '/courses',
-        icon: BookOpen ,
+        href: '/courses',
+        icon: BookOpen,
     },
-    // user, batch
+
+
     {
+        title: 'Payment',
+        href: '/payments',
+        icon: DollarSign,
+    },
+
+    ...(userRole === 'admin'
+        ? [
+              {
+                  title: 'Users',
+                  href: '/users',
+                  icon: User,
+              },
+              {
         title: 'Batches',
-        href:  '/batches',
+        href: '/batches',
         icon: Folder,
     },
-    {
-        title: 'Users',
-        href:  '/users',
-        icon: User,
-    },
+          ]
+        : []),
 ];
-
-
-
-export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

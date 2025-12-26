@@ -22,7 +22,7 @@ export default function Dashboard() {
                         </>
                     ) : (
                         <>
-                            <StatCard icon={<BookOpen />} title="Enrolled Courses" value={stats.enrolled_courses} />
+                            {/* <StatCard icon={<BookOpen />} title="Enrolled Courses" value={stats.enrolled_courses} /> */}
                             <StatCard icon={<DollarSign />} title="Paid Fee" value={stats.paid_fee} />
                             <StatCard icon={<DollarSign />} title="Due Fee" value={stats.due_fee} />
                         </>

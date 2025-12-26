@@ -96,9 +96,9 @@ export default function Show({ user, payments }) {
                                     Payment History
                                 </h3>
                                 <Button asChild variant="outline" size="sm">
-                                    {/* <Link href='users.payments.create' user.id>
+                                    <Link href={`users/${user.id}/payments/create`}>
                                         <Plus className="mr-2 h-4 w-4" /> Add Payment
-                                    </Link> */}
+                                    </Link>
                                 </Button>
                             </div>
                             <div className="overflow-hidden rounded-lg border">

@@ -18,7 +18,7 @@ $user = Auth::user();
             $stats['pending_students'] = User::where('role', 'student')->where('status', false)->count();
             $stats['active_students'] = User::where('role', 'student')->where('status', true)->count();
         } else {
-            $stats['enrolled_courses'] = $user->courses()->count();
+            // $stats['enrolled_courses'] = $user->courses()->count();
             $stats['paid_fee'] = $user->paid_fee;
             $stats['due_fee'] = $user->due_fee;
         }

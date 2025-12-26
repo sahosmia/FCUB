@@ -9,24 +9,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
 
-export default function GenericActionMenu({
-    id,
-    resource,
-    actions = ['view', 'edit', 'delete'],
-    children
-}) {
-    // পপআপ ওপেন কি না তা ট্র্যাকিং করার জন্য স্টেট
+export default function GenericActionMenu({ id, resource, actions = ['view', 'edit', 'delete'], children }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     const handleDelete = () => {
@@ -72,7 +57,6 @@ export default function GenericActionMenu({
                         <>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                                // এখানে সরাসরি ডিলিট না করে পপআপ স্টেট ট্রু করা হচ্ছে
                                 onSelect={() => setIsDeleteDialogOpen(true)}
                                 className="flex cursor-pointer items-center text-red-600 focus:bg-red-50 focus:text-red-600"
                             >
@@ -83,27 +67,15 @@ export default function GenericActionMenu({
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* কনফার্মেশন ডায়ালগ মেনুর বাইরে রাখা হয়েছে যাতে মেনু বন্ধ হলেও এটি দেখা যায় */}
-            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this
-                            <strong> {resource.slice(0, -1)}</strong> and remove its data from our servers.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleDelete}
-                            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-                        >
-                            Delete
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <ConfirmDialog
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                onConfirm={handleDelete}
+                title="Delete Confirmation"
+                description={`Are you sure you want to delete this ${resource.slice(0, -1)}?`}
+                variant="destructive"
+                confirmText="Delete Now"
+            />
         </>
     );
 }

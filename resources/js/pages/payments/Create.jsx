@@ -5,45 +5,58 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FormField from '@/components/form/form-field';
 import { Input } from '@/components/ui/input';
 import SelectForm from '@/components/form/SelectForm';
+import { usePage } from '@inertiajs/react';
 
-export default function Create({ user }) {
-    const defaultAmount = (user.course_fee / 8).toFixed(2);
+export default function Create({users}) {
+
+    const { auth } = usePage().props;
+    // const defaultAmount = (user.course_fee / 8).toFixed(2);
+    const defaultAmount = 2000;
 
     const form = useForm({
         amount: defaultAmount,
         receipt: null,
         payment_date: new Date().toISOString().slice(0, 10),
-        semester: '',
+        user_id: ""
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        form.post(route('users.payments.store', user.id));
+        console.log("aa");
+
+        form.post('/payments');
     };
 
-    const semesterOptions = Array.from({ length: 8 }, (_, i) => ({
-        value: i + 1,
-        label: `Semester ${i + 1}`,
-    }));
+
 
     return (
         <AppLayout>
-            <Head title={`Add Payment for ${user.name}`} />
+            <Head title={`Add Payment for ${auth.name}`} />
             <div className="p-4 flex justify-center">
                 <Card className="max-w-2xl w-full p-4">
                     <CardHeader>
-                        <CardTitle>Add Payment for {user.name}</CardTitle>
+                        <CardTitle>Add Payment for {auth.name}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit}>
-                            <SelectForm
-                                label="Semester"
-                                error={form.errors.semester}
-                                value={form.data.semester}
-                                onValueChange={(value) => form.setData('semester', value)}
-                                placeholder="Select Semester"
-                                options={semesterOptions}
-                            />
+
+                           <SelectForm
+    label="User"
+    error={form.errors.user_id}
+    value={form.data.user_id?.toString()} // ভ্যালু স্ট্রিং হিসেবে পাঠানো ভালো
+    onValueChange={(value) =>
+        form.setData("user_id", value)
+    }
+    placeholder="Select User"
+    options={
+        users?.map((user) => ({
+            value: user.id.toString(), // ID কে স্ট্রিং-এ রূপান্তর করুন
+            label: user.name,
+        })) || []
+    }
+/>
+
+
 
                             <FormField label="Amount" error={form.errors.amount}>
                                 <Input
@@ -70,7 +83,7 @@ export default function Create({ user }) {
 
                             <div className="mt-6 flex justify-end gap-2">
                                 <Button asChild variant="outline">
-                                    <Link href={route('users.payments.index', user.id)}>Cancel</Link>
+                                    <Link href='/payments'>Cancel</Link>
                                 </Button>
                                 <Button type="submit" disabled={form.processing}>
                                     {form.processing ? 'Saving...' : 'Save Payment'}

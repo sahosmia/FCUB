@@ -6,11 +6,11 @@ import { CheckCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
 import { roles } from '@/constants';
+import { toast } from 'sonner';
 
 // Custom Components
 import GenericActionMenu from '@/components/DataTable/GenericActionMenu';
 import Pagination from '@/components/DataTable/Pagination';
-import StatusBadge from '@/components/DataTable/StatusBadge';
 
 // Shadcn components
 import SelectForm from '@/components/form/SelectForm';
@@ -25,9 +25,15 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import PaymentStatusBadge from '../../components/DataTable/PaymentStatusBadge';
+import { paymentStatus } from '../../constants';
 
 export default function Index() {
-    const { users = {}, filters: serverFilters = {} } = usePage().props;
+    const {
+        payments = {},
+        filters: serverFilters = {},
+        flash,
+    } = usePage().props;
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
         useTableFilters({
@@ -40,6 +46,20 @@ export default function Index() {
         });
 
     useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success, {
+                id: 'success-toast',
+            });
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error, {
+                id: 'error-toast',
+            });
+        }
+    }, [flash]);
+
+    useEffect(() => {
         const t = setTimeout(() => {
             if (searchTerm !== filters.search)
                 handleChange('search', searchTerm);
@@ -48,25 +68,25 @@ export default function Index() {
     }, [searchTerm]);
 
     const handleApprove = (id) => {
-        router.post(`/users/${id}/approve`);
+        router.post(`/payments/${id}/approve`);
     };
 
     return (
         <AppLayout>
-            <Head title="Users" />
+            <Head title="Payments" />
             <div className="space-y-6 p-6">
                 {/* Header Section */}
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold">Users</h1>
+                    <h1 className="text-2xl font-semibold">Payments</h1>
                     <Button asChild>
-                        <Link href="/users/create">New User</Link>
+                        <Link href="/payments/create">New Payment</Link>
                     </Button>
                 </div>
 
                 {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
-                        placeholder="Search..."
+                        placeholder="Search by name and student id..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="mb-4 max-w-md"
@@ -79,7 +99,7 @@ export default function Index() {
                             placeholder: 'Sort By',
                             items: [
                                 { label: 'Date', value: 'created_at' },
-                                { label: 'Title', value: 'title' },
+                                { label: 'Amount', value: 'amount' },
                             ],
                         },
                         {
@@ -87,7 +107,7 @@ export default function Index() {
                             placeholder: 'Limit',
                             items: selectItems,
                         },
-                        { key: 'role', placeholder: 'Roles', items: roles },
+                        { key: 'status', placeholder: 'Status', items: paymentStatus },
                     ].map((config) => (
                         <SelectForm
                             key={config.key}
@@ -107,12 +127,10 @@ export default function Index() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>#</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Email</TableHead>
-                                 <TableHead>Phone</TableHead>
-                                <TableHead>Gender</TableHead>
-                                <TableHead>Student ID</TableHead>
-                                <TableHead>Role</TableHead>
+                                <TableHead>User Name</TableHead>
+                                <TableHead>Amount</TableHead>
+                                <TableHead>Payment Date</TableHead>
+                                <TableHead>Receipt</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">
                                     Actions
@@ -120,37 +138,58 @@ export default function Index() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {users.data.map((user, index) => (
-                                <TableRow key={user.id}>
+                            {payments.data.map((payment, index) => (
+                                <TableRow key={payment.id}>
                                     <TableCell>
-                                        {(users.from || 0) + index}
+                                        {(payments.from || 0) + index}
                                     </TableCell>
-                                    <TableCell>{user.name}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.phone}</TableCell>
-                                    <TableCell>{user.gender}</TableCell>
-                                    <TableCell>{user.student_id}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {payment.user?.name || 'N/A'}
+                                    </TableCell>
+                                    <TableCell>৳{payment.amount}</TableCell>
                                     <TableCell>
-                                        {user.role}
+                                        {payment.payment_date}
                                     </TableCell>
                                     <TableCell>
-                                        <StatusBadge active={user.status} />
+                                        {payment.receipt ? (
+                                            <a
+                                                href={`/storage/${payment.receipt}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center text-blue-600 underline transition-colors hover:text-blue-800"
+                                            >
+                                                View Receipt
+                                            </a>
+                                        ) : (
+                                            <span className="text-muted-foreground italic">
+                                                No Receipt
+                                            </span>
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <PaymentStatusBadge
+                                            status={payment.status}
+                                        />{' '}
                                     </TableCell>
 
                                     <TableCell className="text-right">
                                         <GenericActionMenu
-                                            resource="users"
-                                            id={user.id}
+                                            resource="payments"
+                                            id={payment.id}
+                                            actions={['view']}
                                         >
                                             {/* Extra New Menu */}
-                                            {!user.status && (
+                                            {!payment.status && (
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        handleApprove(user.id)
+                                                        handleApprove(
+                                                            payment.id,
+                                                        )
                                                     }
                                                 >
                                                     <CheckCircle className="mr-2 h-4 w-4" />
-                                                    Approve User
+                                                    Approve Payment
                                                 </DropdownMenuItem>
                                             )}
                                         </GenericActionMenu>
@@ -160,7 +199,7 @@ export default function Index() {
                         </TableBody>
                     </Table>
                 </div>
-                <Pagination paginator={users} />
+                <Pagination paginator={payments} />
             </div>
         </AppLayout>
     );
