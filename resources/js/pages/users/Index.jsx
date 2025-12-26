@@ -5,6 +5,8 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { CheckCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
+import { toast } from 'sonner';
+
 import { roles } from '@/constants';
 
 // Custom Components
@@ -27,7 +29,7 @@ import {
 } from '@/components/ui/table';
 
 export default function Index() {
-    const { users = {}, filters: serverFilters = {} } = usePage().props;
+    const { users = {}, filters: serverFilters = {}, flash } = usePage().props;
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
         useTableFilters({
@@ -38,6 +40,20 @@ export default function Index() {
             status: serverFilters.status ?? '',
             role: serverFilters.role ?? '',
         });
+
+        useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success, {
+                id: 'success-toast',
+            });
+        }
+
+        if (flash?.error) {
+            toast.error(flash.error, {
+                id: 'error-toast',
+            });
+        }
+    }, [flash]);
 
     useEffect(() => {
         const t = setTimeout(() => {
@@ -109,7 +125,7 @@ export default function Index() {
                                 <TableHead>#</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
-                                 <TableHead>Phone</TableHead>
+                                <TableHead>Phone</TableHead>
                                 <TableHead>Gender</TableHead>
                                 <TableHead>Student ID</TableHead>
                                 <TableHead>Role</TableHead>
@@ -130,9 +146,7 @@ export default function Index() {
                                     <TableCell>{user.phone}</TableCell>
                                     <TableCell>{user.gender}</TableCell>
                                     <TableCell>{user.student_id}</TableCell>
-                                    <TableCell>
-                                        {user.role}
-                                    </TableCell>
+                                    <TableCell>{user.role}</TableCell>
                                     <TableCell>
                                         <StatusBadge active={user.status} />
                                     </TableCell>

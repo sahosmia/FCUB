@@ -11,18 +11,11 @@ class Course extends Model
 
     protected $fillable = [
         'title',
-        'description',
-        'duration',
-        'image',
+        'code',
+        'credit',
         'semester',
-        'user_id',
-        'is_active',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
       /**
      * The users that are enrolled in the course.

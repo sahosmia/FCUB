@@ -1,94 +1,84 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import AppLayout from "@/layouts/app-layout";
-import { Head, useForm, Link, usePage } from "@inertiajs/react";
-import { semesters } from "@/constants";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { semesters } from '@/constants';
+import AppLayout from '@/layouts/app-layout';
+import { Head, Link, useForm } from '@inertiajs/react';
 
 // custom components
-import SelectForm from "@/components/Form/SelectForm";
-import FormField from "@/components/Form/form-field";
-import { Check } from "lucide-react";
-
+import SelectForm from '@/components/Form/SelectForm';
+import FormField from '@/components/Form/form-field';
 
 export default function Create() {
-
-    const {users} = usePage().props;
-
-
     const form = useForm({
-        title: "",
-        description: "",
-        duration: "",
-        semester: "",
-        is_active: true,
-        user_id: "",
+        title: '',
+        code: '',
+        credit: '',
+        semester: '',
     });
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        form.post("/courses");
+        form.post('/courses');
     };
 
     return (
         <AppLayout>
             <Head title="Create Course" />
 
-            <div className="p-4 flex justify-center">
-                <Card className="max-w-2xl w-full p-4">
+            <div className="flex justify-center p-4">
+                <Card className="w-full max-w-2xl p-4">
                     <CardHeader>
-                        <h1 className="text-xl font-semibold mb-4">New Course</h1>
+                        <h1 className="mb-4 text-xl font-semibold">
+                            New Course
+                        </h1>
                     </CardHeader>
 
                     <CardContent>
                         <form onSubmit={handleSubmit}>
-
                             {/* Title */}
-                            <FormField
-                                label="Title"
-                                error={form.errors.title}
-                            >
+                            <FormField label="Title" error={form.errors.title}>
                                 <Input
                                     value={form.data.title}
                                     placeholder="Enter course title"
                                     onChange={(e) =>
-                                        form.setData("title", e.target.value)
+                                        form.setData('title', e.target.value)
                                     }
                                 />
                             </FormField>
 
-                            {/* Description */}
+
+
+                            {/* code */}
                             <FormField
-                                label="Description"
-                                error={form.errors.description}
+                                label="Code"
+                                error={form.errors.code}
                             >
-                                <Textarea
-                                    rows={5}
-                                    value={form.data.description}
-                                    placeholder="Enter course description"
+                                <Input
+                                    type="text"
+                                    value={form.data.code}
+                                    placeholder="Enter course code"
                                     onChange={(e) =>
-                                        form.setData("description", e.target.value)
+                                        form.setData('code', e.target.value)
                                     }
                                 />
                             </FormField>
 
-                            {/* Duration */}
+
+                            {/* Credit */}
                             <FormField
-                                label="Duration (hours)"
-                                error={form.errors.duration}
+                                label="Credit"
+                                error={form.errors.credit}
                             >
                                 <Input
                                     type="number"
-                                    value={form.data.duration}
-                                    placeholder="Enter course duration"
+                                    value={form.data.credit}
+                                    placeholder="Enter course credit"
                                     onChange={(e) =>
-                                        form.setData("duration", e.target.value)
+                                        form.setData('credit', e.target.value)
                                     }
                                 />
                             </FormField>
@@ -98,50 +88,13 @@ export default function Create() {
                                 error={form.errors.semester}
                                 value={form.data.semester}
                                 onValueChange={(value) =>
-                                    form.setData("semester", value)
+                                    form.setData('semester', value)
                                 }
                                 placeholder="Select Semester"
                                 options={semesters}
                             />
 
-                            {/* User ID    */}
-                            <SelectForm
-                                label="Assign to User"
-                                error={form.errors.user_id}
-                                value={form.data.user_id}
-                                onValueChange={(value) =>
-                                    form.setData("user_id", value)
-                                }
-                                placeholder="Select User"
-                                options={users.map((u) => ({
-                                    label: u.name,
-                                    value: String(u.id),
-                                }))}
-                            />
 
-                            {/* shadcn check box for is_active */}
-                            <FormField
-    label="Is Active"
-    error={form.errors.is_active}
->
-    <div className="flex items-center space-x-2">
-        <Checkbox
-            id="is_active"
-            // Integer value-ke boolean-e convert kore deya (1 => true, 0 => false)
-            checked={Boolean(form.data.is_active)}
-            onCheckedChange={(checked) =>
-                // Backend-e pathanor jonno integer format-e set kora
-                form.setData("is_active", checked ? 1 : 0)
-            }
-        />
-        <Label
-            htmlFor="is_active"
-            className="ml-2 cursor-pointer select-none"
-        >
-            {form.data.is_active == 1 ? "Active" : "Inactive"}
-        </Label>
-    </div>
-</FormField>
 
                             {/* Actions */}
                             <div className="mt-6 flex justify-end gap-2">
@@ -153,7 +106,9 @@ export default function Create() {
                                     type="submit"
                                     disabled={form.processing}
                                 >
-                                    {form.processing ? "Saving..." : "Save Course"}
+                                    {form.processing
+                                        ? 'Saving...'
+                                        : 'Save Course'}
                                 </Button>
                             </div>
                         </form>
