@@ -35,6 +35,7 @@ class User extends Authenticatable
         'admission_document',
         'admission_fee',
         'student_id',
+        'semester',
 
     ];
 

@@ -3,9 +3,10 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function Dashboard() {
-    const { auth, stats } = usePage().props;
+    const { auth, stats, courses } = usePage().props;
     const { user } = auth;
-    console.log(stats);
+    console.log(user);
+    console.log(courses);
 
     return (
         <AppLayout>
@@ -41,19 +42,20 @@ export default function Dashboard() {
                 ) : (
                     <>
                         {/* STUDENT STATS */}
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
                             <StatCard
                                 title="Total Payable"
-                                value={stats.total_payable}
+                                value={stats.course_fee}
                             />
                             <StatCard title="Paid Fee" value={stats.paid_fee} />
                             <StatCard title="Due Fee" value={stats.due_fee} />
-                            <StatCard title="Batch" value="26th" />
+                            <StatCard title="Batch" value={stats.batch} />
+                            <StatCard title="Semester" value={stats.semester} />
                         </div>
 
                         {/* COURSES SECTION */}
                         <div className="mt-6 grid gap-6 md:grid-cols-2">
-                            <CourseTable title="Completed Courses" />
+                            <CourseTable title="Current Courses" />
                             <StatusBox
                                 title="Upcoming Courses"
                                 message="There is no offered course for next semester."
@@ -64,7 +66,6 @@ export default function Dashboard() {
                             {/* Student Basic Info */}
                             <div className="rounded-lg border border-gray-200 bg-white p-6">
                                 <div className="mb-6 flex items-center gap-3">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-100"></div>
                                     <div>
                                         <h2 className="text-gray-900">
                                             Student Basic Info
@@ -73,6 +74,7 @@ export default function Dashboard() {
                                             First Capital University of
                                             Bangladesh
                                         </p>
+                                        <hr />
                                     </div>
                                 </div>
                                 <div className="flex gap-6">
@@ -82,7 +84,7 @@ export default function Dashboard() {
                                                 Name:{' '}
                                             </span>
                                             <span className="text-gray-900">
-                                                Nasimul Noyon Ontor
+                                                {user.name}
                                             </span>
                                         </div>
                                         <div>
@@ -90,23 +92,16 @@ export default function Dashboard() {
                                                 Department:{' '}
                                             </span>
                                             <span className="text-gray-900">
-                                                Department Of English
+                                                Department Of CSE
                                             </span>
                                         </div>
-                                        <div>
-                                            <span className="text-sm text-gray-600">
-                                                Faculty:{' '}
-                                            </span>
-                                            <span className="text-gray-900">
-                                                FHSS
-                                            </span>
-                                        </div>
+
                                         <div>
                                             <span className="text-sm text-gray-600">
                                                 Mobile:{' '}
                                             </span>
                                             <span className="text-gray-900">
-                                                01759799999
+                                                {user.phone}
                                             </span>
                                         </div>
                                         <div>
@@ -114,7 +109,7 @@ export default function Dashboard() {
                                                 Blood Group:{' '}
                                             </span>
                                             <span className="text-gray-900">
-                                                O+
+                                                {user.blood_group}
                                             </span>
                                         </div>
                                     </div>

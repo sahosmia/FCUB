@@ -19,12 +19,20 @@ $user = Auth::user();
             $stats['active_students'] = User::where('role', 'student')->where('status', true)->count();
         } else {
             // $stats['enrolled_courses'] = $user->courses()->count();
+            $stats['course_fee'] = $user->course_fee;
             $stats['paid_fee'] = $user->paid_fee;
             $stats['due_fee'] = $user->due_fee;
+            $stats['batch'] = $user->batch_id;
+            $stats['semester'] = $user->semester;
+
+             $courses = Course::where('semester', $user->semester)
+                ->orderBy('title')
+                ->get();
         }
 
         return Inertia::render('dashboard', [
             'stats' => $stats,
+            'courses' => $courses ?? null,
         ]);
     }
 }
