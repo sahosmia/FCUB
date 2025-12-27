@@ -1,130 +1,454 @@
-import AppLayout from "@/layouts/app-layout";
-import { Head, Link } from "@inertiajs/react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { User, Mail, Phone, CalendarDays, KeyRound, Briefcase, FileText, DollarSign, Building, Plus } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import Pagination from "@/components/DataTable/Pagination";
+import AppLayout from '@/layouts/app-layout';
+import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 
-export default function Show({ user, payments }) {
+// Reusable Info Row Component
+const InfoRow = ({ label, value, children }) => (
+    <div className="mb-3 flex flex-col border-b border-gray-50 pb-2 last:border-0 sm:mb-4 sm:flex-row">
+        <span className="w-full text-sm text-gray-500 sm:w-48">{label}</span>
+        <div className="flex flex-1 items-center text-sm font-medium text-gray-700">
+            <span className="mr-2 hidden text-gray-400 sm:inline">:</span>
+            {children ? children : value || '—'}
+        </div>
+    </div>
+);
+
+export default function Show({ user }) {
+    // ট্যাবগুলো বড় হাতের অক্ষরে ডিফাইন করা হয়েছে
+    const [activeTab, setActiveTab] = useState('PERSONAL');
+
+    const tabs = ['PERSONAL', 'ADDRESS', 'EDUCATION'];
+
     return (
         <AppLayout>
-            <Head title="Profile" />
+            <Head title={`Profile - ${user.name}`} />
 
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
-                <Card className="overflow-hidden">
-                    <CardHeader className="bg-muted/30 pb-8">
-                        <div className="space-y-1">
-                            <CardTitle className="text-3xl font-bold">
-                                {user.name}
-                            </CardTitle>
-                            <div className="flex items-center text-muted-foreground gap-2">
-                                <Mail className="h-4 w-4" />
-                                <span>{user.email}</span>
+            <div className="min-h-screen bg-slate-50 p-4 font-sans sm:p-8">
+                {/* Breadcrumb */}
+                <div className="mb-6 flex items-center gap-1 text-xs text-slate-500">
+                    <Link
+                        href="/dashboard"
+                        className="text-red-500 hover:underline"
+                    >
+                        Home
+                    </Link>
+                    <span>&gt;</span>
+                    <span className="text-gray-600">View Profile</span>
+                    <span>&gt;</span>
+                    <span className="text-gray-400">{user.name}</span>
+                </div>
+
+                {/* Page Title */}
+                <h1 className="mb-6 text-2xl font-bold tracking-tight text-slate-700 uppercase">
+                    Student Profile
+                </h1>
+
+                {/* Main Card */}
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+                    {/* Header Section */}
+                    <div className="p-6 pb-0">
+                        <div className="mb-6 flex items-start justify-between">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-800">
+                                    {user.name}
+                                </h2>
+                                <p className="text-sm text-gray-500">
+                                    {user.email}
+                                </p>
                             </div>
-                        </div>
-                    </CardHeader>
-
-                    <CardContent className="pt-6 space-y-8">
-                        {/* User Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <DetailItem icon={<User />} label="Gender" value={user.gender} />
-                            <DetailItem icon={<Phone />} label="Phone" value={user.phone} />
-                            <DetailItem icon={<CalendarDays />} label="Date of Birth" value={user.date_of_birth} />
-                            <DetailItem icon={<KeyRound />} label="Role" value={user.role} />
-                            <DetailItem icon={<Briefcase />} label="Session" value={user.session} />
-                            <DetailItem icon={<FileText />} label="Student ID" value={user.student_id} />
-                            <DetailItem icon={<Building />} label="Batch" value={user.batch?.title} />
-                            {user.admission_document && (
-                                <DetailItem icon={<FileText />} label="Admission Document">
-                                    <a href={`/storage/${user.admission_document}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-                                        View Document
-                                    </a>
-                                </DetailItem>
-                            )}
+                            <span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold tracking-wider text-slate-600 uppercase">
+                                {user.role}
+                            </span>
                         </div>
 
-                        {user.role === 'student' && (
-                            <>
-                                <Separator />
+                        {/* Tabs Navigation */}
+                        <div className="flex flex-wrap gap-2 border-b border-gray-100 pb-6">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`rounded-full border px-6 py-2 text-xs font-bold tracking-wide transition-all duration-200 ${
+                                        activeTab === tab
+                                            ? 'border-slate-800 bg-slate-800 text-white shadow-md'
+                                            : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
-                                {/* Financial Information */}
-                                <div className="space-y-3">
-                                    <h3 className="text-lg font-semibold">
-                                        Financial Information
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <DetailItem icon={<DollarSign />} label="Course Fee" value={user.course_fee} />
-                                        <DetailItem icon={<DollarSign />} label="Paid Fee" value={user.paid_fee} />
-                                        <DetailItem icon={<DollarSign />} label="Due Fee" value={user.due_fee} />
-                                        <DetailItem icon={<DollarSign />} label="Admission Fee" value={user.admission_fee} />
+                    {/* Tab Content */}
+                    <div className="p-6 transition-all">
+                        {/* 1. PERSONAL TAB */}
+                        {activeTab === 'PERSONAL' && (
+                            <div className="animate-in duration-300 fade-in slide-in-from-bottom-2">
+                                <div className="mb-6 inline-block rounded bg-amber-100 px-3 py-1 text-xs font-bold tracking-wide text-amber-800 uppercase">
+                                    Personal Information
+                                </div>
+                                <div className="grid grid-cols-1 gap-x-12 gap-y-4 lg:grid-cols-2">
+                                    {/* Left Column */}
+                                    <div className="space-y-4">
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Mobile Number
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : 01831552110
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Email Address
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : nazminnoscindir@gmail.com
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Home Phone
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : +880 1765-486609
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Gender
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : Male
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Date of Birth
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : 2000-07-12
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Blood Group
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : AB+
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Marital Status
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : Unmarried
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                National Id
+                                            </span>
+                                            <span className="text-gray-500">
+                                                :
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Right Column */}
+                                    <div className="space-y-4">
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Father's Name
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : MD ANAMUL MIA
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Father's Occupation
+                                            </span>
+                                            <span className="text-gray-500">
+                                                :
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Mother's Name
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : AMENA BEGUM
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Mother's Occupation
+                                            </span>
+                                            <span className="text-gray-500">
+                                                :
+                                            </span>
+                                        </div>
+                                        <div className="flex">
+                                            <span className="w-40 text-gray-600">
+                                                Parents Phone
+                                            </span>
+                                            <span className="text-gray-500">
+                                                : +880 1765-486609
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <Separator />
-
-                                {/* Payment History */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-semibold">
-                                            Payment History
-                                        </h3>
-                                        <Button asChild variant="outline" size="sm">
-                                            <Link href={`/users/${user.id}/payments/create`}>
-                                                <Plus className="mr-2 h-4 w-4" /> Add Payment
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                    <div className="overflow-hidden rounded-lg border">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Semester</TableHead>
-                                                    <TableHead>Amount</TableHead>
-                                                    <TableHead>Payment Date</TableHead>
-                                                    <TableHead>Receipt</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {payments.data.map((payment) => (
-                                                    <TableRow key={payment.id}>
-                                                        <TableCell>{payment.semester}</TableCell>
-                                                        <TableCell>{payment.amount}</TableCell>
-                                                        <TableCell>{payment.payment_date}</TableCell>
-                                                        <TableCell>
-                                                            {payment.receipt && (
-                                                                <a href={`/storage/${payment.receipt}`} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
-                                                                    <FileText className="h-5 w-5" />
-                                                                </a>
-                                                            )}
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                    <Pagination paginator={payments} />
+                                <div className="mt-8 flex justify-end">
+                                    <button className="rounded bg-[#2c3e50] px-6 py-2 text-xs font-bold text-white uppercase transition hover:bg-[#34495e]">
+                                        Edit Personal
+                                    </button>
                                 </div>
-                            </>
+                            </div>
                         )}
-                    </CardContent>
-                </Card>
+
+                        {/* 2. ADDRESS TAB */}
+                        {activeTab === 'ADDRESS' && (
+                            <div className="animate-in duration-300 fade-in slide-in-from-bottom-2">
+                                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                                    {/* Present Address */}
+                                    <div>
+                                        <div className="mb-6 inline-block rounded bg-green-100 px-3 py-1 text-xs font-bold tracking-wide text-green-800 uppercase">
+                                            Present Address
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Address
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : -0
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Thana
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Daulatpuri
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Post Code
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    :
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    District
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Comilla
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Country
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : BANGLADESH
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Permanent Address */}
+                                    <div>
+                                        <div className="mb-6 inline-block rounded bg-green-100 px-3 py-1 text-xs font-bold tracking-wide text-green-800 uppercase">
+                                            Permanent Address
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Address
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : GONGAPRASAD
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Thana
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Daulatpuri
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Post Code
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    :
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    District
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Comilla
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Country
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : BANGLADESH
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-8 flex justify-end">
+                                    <button className="rounded bg-[#2c3e50] px-6 py-2 text-xs font-bold text-white uppercase transition hover:bg-[#34495e]">
+                                        Edit Address
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 3. EDUCATION TAB */}
+                        {activeTab === 'EDUCATION' && (
+                            <div className="p-6">
+                                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                                    {/* SSC/EQUIVALENT */}
+                                    <div>
+                                        <div className="mb-6 inline-block rounded bg-blue-100 px-3 py-1 text-xs tracking-wide text-blue-800 uppercase">
+                                            SSC/EQUIVALENT
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Exam Name
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Vocational(SSC)
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Group
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : BUILDING MAINTENANCE
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Result
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : 5.00
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Passing Year
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : 2016
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Institute Name
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : DAUDKANDI ADARSHA HIGH
+                                                    SCHOOL
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Board
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : BTEB
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* HSC/EQUIVALENT */}
+                                    <div>
+                                        <div className="mb-6 inline-block rounded bg-blue-100 px-3 py-1 text-xs tracking-wide text-blue-800 uppercase">
+                                            HSC/EQUIVALENT
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Exam Name
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : Diploma
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Group
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : COMPUTER
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Result
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : 3.63
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Passing Year
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : 2020
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Institute Name
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : DHAKA POLYTECHNIC
+                                                    INSTITUTE
+                                                </span>
+                                            </div>
+                                            <div className="flex">
+                                                <span className="w-32 text-gray-600">
+                                                    Board
+                                                </span>
+                                                <span className="text-gray-500">
+                                                    : BTEB
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 flex justify-end">
+                                    <button className="rounded bg-[#2c3e50] px-6 py-2 text-white transition-colors hover:bg-[#34495e]">
+                                        Edit Education
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </AppLayout>
     );
 }
-
-const DetailItem = ({ icon, label, value }) => (
-    <div className="flex items-center gap-3">
-        <div className="p-2 bg-primary/10 rounded-full">
-            {icon}
-        </div>
-        <div>
-            <p className="text-xs text-muted-foreground uppercase font-semibold">
-                {label}
-            </p>
-            <p className="text-sm font-medium">{value || "—"}</p>
-        </div>
-    </div>
-);

@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoutineController;
 use App\Http\Controllers\ResultController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -27,6 +28,7 @@ Route::get('/about', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+  //  Route::get('profile', [StudentController::class, 'show'])->name('profile.show');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -50,8 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/routines/create', [RoutineController::class, 'create'])
         ->name('routines.create');
 
-    Route::post('/routines', [RoutineController::class, 'store'])
-        ->name('routines.store');
+    Route::post('/routines', [RoutineController::class, 'store'])->name('routines.store');
 
     // Student + Admin (View) Result
     Route::get('/results', [ResultController::class, 'index'])

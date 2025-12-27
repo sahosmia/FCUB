@@ -16,7 +16,7 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        form.post('/routines.store', {
+        form.post('/results.store', {
             forceFormData: true,
         });
     };
@@ -28,7 +28,7 @@ export default function Create() {
             <div className="flex justify-center p-6">
                 <Card className="w-full max-w-xl">
                     <CardHeader>
-                        <CardTitle>Upload New Routine</CardTitle>
+                        <CardTitle>Upload New Result</CardTitle>
                     </CardHeader>
 
                     <CardContent>
@@ -39,14 +39,14 @@ export default function Create() {
                             </p>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Routine Title */}
+                                {/* Result Title */}
                                 <FormField
-                                    label="Routine Title"
+                                    label="Result Title"
                                     error={form.errors.title}
                                 >
                                     <Input
                                         type="text"
-                                        placeholder="e.g. Mid Term Exam Routine"
+                                        placeholder="e.g. Mid Term Exam Result"
                                         value={form.data.title}
                                         onChange={(e) =>
                                             form.setData(
@@ -60,7 +60,7 @@ export default function Create() {
 
                                 {/* PDF Upload */}
                                 <FormField
-                                    label="Routine PDF"
+                                    label="Result PDF"
                                     error={form.errors.file}
                                 >
                                     <Input
@@ -79,7 +79,7 @@ export default function Create() {
                                 {/* Actions */}
                                 <div className="flex justify-end gap-2 pt-4">
                                     <Button asChild variant="outline">
-                                        <Link href="/routines.index">
+                                        <Link href="/results.index">
                                             Cancel
                                         </Link>
                                     </Button>

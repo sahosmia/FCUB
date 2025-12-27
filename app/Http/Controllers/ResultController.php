@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
-use LDAP\Result;
+use App\Models\Result;
 
 class ResultController extends Controller
 {
@@ -37,7 +37,7 @@ class ResultController extends Controller
      */
    public function create()
     {
-        return Inertia::render('routines/Create');
+        return Inertia::render('results/Create');
     }
 
 
@@ -53,9 +53,9 @@ class ResultController extends Controller
         ]);
 
         // Store PDF
-        $path = $request->file('file')->store('routines', 'public');
+        $path = $request->file('file')->store('results', 'public');
 
-        Routine::create([
+        Result::create([
             'title' => $request->title,
             'file_path' => $path,
         ]);
