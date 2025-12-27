@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('title');
         $table->string('file_path'); // pdf / image
-        $table->foreignId('uploaded_by')->constrained('users');
+       
         $table->timestamps();
 });
     }

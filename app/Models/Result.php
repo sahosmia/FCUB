@@ -10,6 +10,6 @@ class Result extends Model
      protected $fillable = [
         'title',
         'file_path',
-        'uploaded_by',
+        
     ];
 }
