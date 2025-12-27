@@ -55,6 +55,8 @@ class ResultController extends Controller
         // Store PDF
         $path = $request->file('file')->store('results', 'public');
 
+        //$data['result'] = $request->file('result')->store('results', 'public');
+
         Result::create([
             'title' => $request->title,
             'file_path' => $path,

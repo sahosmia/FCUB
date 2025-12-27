@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/routines/create', [RoutineController::class, 'create'])
         ->name('routines.create');
 
-    Route::post('/routines', [RoutineController::class, 'store'])->name('routines.store');
+    Route::post('/routines.store', [RoutineController::class, 'store'])->name('routines.store');
 
     // Student + Admin (View) Result
     Route::get('/results', [ResultController::class, 'index'])
@@ -63,7 +63,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/results/create', [ResultController::class, 'create'])
         ->name('results.create');
 
-    Route::post('/results', [ResultController::class, 'store'])
+    Route::post('/results.store', [ResultController::class, 'store'])
         ->name('results.store');
 
 
