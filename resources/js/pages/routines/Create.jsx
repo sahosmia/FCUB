@@ -16,7 +16,7 @@ export default function Create() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        form.post('/routines.store', {
+        form.post('/routines', {
             forceFormData: true,
         });
     };

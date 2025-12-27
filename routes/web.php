@@ -44,28 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // });
 
     // Student + Admin (View)
-    Route::get('/routines', [RoutineController::class, 'index'])
-        ->name('routines.index');
 
-    // Admin Only
+        Route::resource('routines', RoutineController::class)
+            ->except(['show']);
 
-    Route::get('/routines/create', [RoutineController::class, 'create'])
-        ->name('routines.create');
+        Route::resource('results', ResultController::class)
+            ->except(['show']);
 
-    Route::post('/routines', [RoutineController::class, 'store'])->name('routines.store');
-
-    // Student + Admin (View) Result
-    Route::get('/results', [ResultController::class, 'index'])
-        ->name('results.index');
-
-    // Admin Only
-
-    Route::get('/results/create', [ResultController::class, 'create'])
-        ->name('results.create');
-
-    Route::post('/results', [ResultController::class, 'store'])
-        ->name('results.store');
-
+       
 
     // Users
     Route::resource('users', UserController::class);

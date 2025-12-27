@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('routines', function (Blueprint $table) {
-    $table->id();
-    $table->string('title');
-    $table->string('file_path'); // pdf / image
-    $table->foreignId('uploaded_by')->constrained('users');
-    $table->timestamps();
-});
+        Schema::create('routines', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('file_path'); // pdf / image
+            $table->timestamps();
+        });
     }
 
     /**

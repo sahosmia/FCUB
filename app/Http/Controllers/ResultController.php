@@ -2,66 +2,131 @@
 
 namespace App\Http\Controllers;
 
-
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Result;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ResultController extends Controller
 {
     /**
      * Student + Admin
-     * Show all results
+     * List results
      */
     public function index()
     {
-        $results = Result::latest()->get()->map(function ($result) {
-            return [
-                'id' => $result->id,
-                'title' => $result->title,
-                'file_path' => $result->file_path,
-                'created_at' => $result->created_at->format('d M Y'),
-            ];
-        });
-
+        $results = Result::get();
         return Inertia::render('results/Index', [
             'results' => $results,
-            'isAdmin' => auth()->user()->role === 'admin',
         ]);
     }
 
     /**
      * Admin only
-     * Show upload form
+     * Show create form
      */
-   public function create()
+    public function create()
     {
+        $this->authorizeAdmin();
+
         return Inertia::render('results/Create');
     }
 
-
     /**
      * Admin only
-     * Store routine PDF
+     * Store result PDF
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $this->authorizeAdmin();
+
+        $data = $request->validate([
             'title' => 'required|string|max:255',
-            'file'  => 'required|file|mimes:pdf|max:5120', // 5MB
+            'file'  => 'required|file|mimes:pdf|max:5120',
         ]);
 
-        // Store PDF
-        $path = $request->file('file')->store('results', 'public');
+        $data['file_path'] = $request->file('file')->store('results', 'public');
 
-        Result::create([
-            'title' => $request->title,
-            'file_path' => $path,
-        ]);
+        Result::create($data);
 
         return redirect()
-            ->route('routines.index')
-            ->with('success', 'Routine uploaded successfully.');
+            ->route('results.index')
+            ->with('success', 'Result uploaded successfully.');
+    }
+
+    /**
+     * Admin only
+     * Show edit form
+     */
+    public function edit(Result $result)
+    {
+        $this->authorizeAdmin();
+
+        return Inertia::render('results/Edit', [
+            'result' => $result,
+        ]);
+    }
+
+    /**
+     * Admin only
+     * Update result
+     */
+    public function update(Request $request, Result $result)
+    {
+        $this->authorizeAdmin();
+
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'file'  => 'nullable|file|mimes:pdf|max:5120',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $this->deleteFile($result);
+            $data['file_path'] = $request->file('file')->store('results', 'public');
+        }
+
+        $result->update($data);
+
+        return redirect()
+            ->route('results.index')
+            ->with('success', 'Result updated successfully.');
+    }
+
+    /**
+     * Admin only
+     * Delete result
+     */
+    public function destroy(Result $result)
+    {
+        $this->authorizeAdmin();
+
+        $this->deleteFile($result);
+        $result->delete();
+
+        return redirect()
+            ->route('results.index')
+            ->with('success', 'Result deleted successfully.');
+    }
+
+   
+
+    /**
+     * -------------------
+     * Helper methods
+     * -------------------
+     */
+
+    private function authorizeAdmin(): void
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+    }
+
+    private function deleteFile(Result $result): void
+    {
+        if ($result->file_path) {
+            Storage::disk('public')->delete($result->file_path);
+        }
     }
 }

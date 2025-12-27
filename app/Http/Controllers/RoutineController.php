@@ -4,63 +4,129 @@ namespace App\Http\Controllers;
 
 use App\Models\Routine;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class RoutineController extends Controller
 {
     /**
      * Student + Admin
-     * Show all routines
+     * List routines
      */
     public function index()
     {
-        $routines = Routine::latest()->get()->map(function ($routine) {
-            return [
-                'id' => $routine->id,
-                'title' => $routine->title,
-                'file_path' => $routine->file_path,
-                'created_at' => $routine->created_at->format('d M Y'),
-            ];
-        });
-
+        $routines = Routine::get();
         return Inertia::render('routines/Index', [
             'routines' => $routines,
-            'isAdmin' => auth()->user()->role === 'admin',
         ]);
     }
 
     /**
      * Admin only
-     * Show upload form
+     * Show create form
      */
-   public function create()
+    public function create()
     {
+        $this->authorizeAdmin();
+
         return Inertia::render('routines/Create');
     }
 
-
     /**
      * Admin only
-     * Store routine PDF
+     * Store routines PDF
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $this->authorizeAdmin();
+
+        $data = $request->validate([
             'title' => 'required|string|max:255',
-            'file'  => 'required|file|mimes:pdf|max:5120', // 5MB
+            'file'  => 'required|file|mimes:pdf|max:5120',
         ]);
 
-        // Store PDF
-        $path = $request->file('file')->store('routines', 'public');
+        $data['file_path'] = $request->file('file')->store('routines', 'public');
 
-        Routine::create([
-            'title' => $request->title,
-            'file_path' => $path,
-        ]);
+        Routine::create($data);
 
         return redirect()
             ->route('routines.index')
             ->with('success', 'Routine uploaded successfully.');
+    }
+
+    /**
+     * Admin only
+     * Show edit form
+     */
+    public function edit(Routine $routine)
+    {
+        $this->authorizeAdmin();
+
+        return Inertia::render('routines/Edit', [
+            'routine' => $routine,
+        ]);
+    }
+
+    /**
+     * Admin only
+     * Update routine
+     */
+    public function update(Request $request, Routine $routine)
+    {
+        $this->authorizeAdmin();
+
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'file'  => 'nullable|file|mimes:pdf|max:5120',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $this->deleteFile($routine);
+            $data['file_path'] = $request->file('file')->store('routines', 'public');
+        }
+
+        $routine->update($data);
+
+        return redirect()
+            ->route('routines.index')
+            ->with('success', 'Routine updated successfully.');
+    }
+
+    /**
+     * Admin only
+     * Delete routine
+     */
+    public function destroy(Routine $routine)
+    {
+        $this->authorizeAdmin();
+
+        $this->deleteFile($routine);
+        $routine->delete();
+
+        return redirect()
+            ->route('routines.index')
+            ->with('success', 'Routine deleted successfully.');
+    }
+
+
+
+    /**
+     * -------------------
+     * Helper methods
+     * -------------------
+     */
+
+    private function authorizeAdmin(): void
+    {
+        if (auth()->user()->role !== 'admin') {
+            abort(403);
+        }
+    }
+
+    private function deleteFile(Routine $routine): void
+    {
+        if ($routine->file_path) {
+            Storage::disk('public')->delete($routine->file_path);
+        }
     }
 }
