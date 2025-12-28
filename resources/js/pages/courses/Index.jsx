@@ -4,13 +4,14 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 
-// Custom Components
+// Components
 import GenericActionMenu from '@/components/DataTable/GenericActionMenu';
 import Pagination from '@/components/DataTable/Pagination';
 import { toast } from 'sonner';
 
-// Shadcn components
+// UI
 import SelectForm from '@/components/form/SelectForm';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,7 +28,10 @@ export default function Index() {
         courses = {},
         filters: serverFilters = {},
         flash,
+        auth,
     } = usePage().props;
+
+    const user = auth.user;
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
         useTableFilters({
@@ -35,25 +39,14 @@ export default function Index() {
             sort_by: serverFilters.sort_by ?? 'created_at',
             sort_dir: serverFilters.sort_dir ?? 'desc',
             limit: serverFilters.limit ?? 10,
-            is_active: serverFilters.is_active ?? '',
             semester: serverFilters.semester ?? '',
         });
 
     useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success, {
-                id: 'success-toast',
-            });
-        }
-
-        if (flash?.error) {
-            toast.error(flash.error, {
-                id: 'error-toast',
-            });
-        }
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
     }, [flash]);
 
-    // Debounce search effect (ekhaneo rakha jay ba hook-e neya jay)
     useEffect(() => {
         const t = setTimeout(() => {
             if (searchTerm !== filters.search)
@@ -65,25 +58,28 @@ export default function Index() {
     return (
         <AppLayout>
             <Head title="Courses" />
+
             <div className="space-y-6 p-6">
-                {/* Header Section */}
-                <div className="flex items-center justify-between">
+                {/* Header */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
                     <h1 className="text-2xl font-semibold">Courses</h1>
-                    <Button asChild>
-                        <Link href="/courses/create">New Course</Link>
-                    </Button>
+
+                    {user.role === 'admin' && (
+                        <Button asChild>
+                            <Link href="/courses/create">+ New Course</Link>
+                        </Button>
+                    )}
                 </div>
 
-                {/* Filter Section */}
-                <div className="flex flex-wrap items-center gap-3">
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-3 rounded-lg border p-4">
                     <Input
-                        placeholder="Search..."
+                        placeholder="Search course..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mb-4 max-w-md"
+                        className="max-w-sm"
                     />
 
-                    {/* Dynamic Filter Reusable Pattern */}
                     {[
                         {
                             key: 'sort_by',
@@ -116,46 +112,79 @@ export default function Index() {
                     ))}
                 </div>
 
-                {/* Table Section */}
+                {/* Table */}
                 <div className="overflow-hidden rounded-lg border">
                     <Table>
-                        <TableHeader>
+                        <TableHeader className="bg-gray-50">
                             <TableRow>
-                                <TableHead>#</TableHead>
+                                <TableHead className="w-12">#</TableHead>
                                 <TableHead>Title</TableHead>
                                 <TableHead>Code</TableHead>
-                                <TableHead>Credit</TableHead>
+                                <TableHead className="text-center">
+                                    Credit
+                                </TableHead>
                                 <TableHead>Semester</TableHead>
                                 <TableHead className="text-right">
                                     Actions
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            {courses.data.map((course, index) => (
-                                <TableRow key={course.id}>
-                                    <TableCell>
-                                        {(courses.from || 0) + index}
-                                    </TableCell>
-                                    <TableCell className="font-medium">
-                                        {course.title}
-                                    </TableCell>
-                                    <TableCell>{course.code}</TableCell>
-                                    <TableCell>{course.credit}</TableCell>
-                                    <TableCell>{course.semester}</TableCell>
 
-                                    <TableCell className="text-right">
-                                        <GenericActionMenu
-                                            resource="courses"
-                                            id={course.id}
-                                            actions={['edit', 'delete']}
-                                        ></GenericActionMenu>
+                        <TableBody>
+                            {courses.data.length > 0 ? (
+                                courses.data.map((course, index) => (
+                                    <TableRow
+                                        key={course.id}
+                                        className="hover:bg-muted/40"
+                                    >
+                                        <TableCell>
+                                            {(courses.from || 0) + index}
+                                        </TableCell>
+
+                                        <TableCell className="font-medium">
+                                            {course.title}
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <Badge variant="outline">
+                                                {course.code}
+                                            </Badge>
+                                        </TableCell>
+
+                                        <TableCell className="text-center">
+                                            {course.credit}
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <Badge variant="secondary">
+                                                Semester {course.semester}
+                                            </Badge>
+                                        </TableCell>
+
+                                        <TableCell className="text-right">
+                                            <GenericActionMenu
+                                                resource="courses"
+                                                id={course.id}
+                                                actions={['edit', 'delete']}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={6}
+                                        className="h-24 text-center text-muted-foreground"
+                                    >
+                                        No courses found.
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
                 </div>
+
+                {/* Pagination */}
                 <Pagination paginator={courses} />
             </div>
         </AppLayout>

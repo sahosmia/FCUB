@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('admission_document')->nullable();
             $table->decimal('admission_fee', 10, 2)->nullable();
             $table->string('student_id')->unique()->nullable();
-            $table->string('semester') ->default('1st');
+            $table->string('semester') ->default('1');
             $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();

@@ -14,7 +14,6 @@ const InfoRow = ({ label, value, children }) => (
 );
 
 export default function Show({ user }) {
-    // ট্যাবগুলো বড় হাতের অক্ষরে ডিফাইন করা হয়েছে
     const [activeTab, setActiveTab] = useState('PERSONAL');
 
     const tabs = ['PERSONAL', 'ADDRESS', 'EDUCATION'];
@@ -95,7 +94,7 @@ export default function Show({ user }) {
                                                 Mobile Number
                                             </span>
                                             <span className="text-gray-500">
-                                                : 01831552110
+                                                {user.phone}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -103,7 +102,7 @@ export default function Show({ user }) {
                                                 Email Address
                                             </span>
                                             <span className="text-gray-500">
-                                                : nazminnoscindir@gmail.com
+                                                {user.email}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -119,7 +118,7 @@ export default function Show({ user }) {
                                                 Gender
                                             </span>
                                             <span className="text-gray-500">
-                                                : Male
+                                                {user.gender}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -127,7 +126,7 @@ export default function Show({ user }) {
                                                 Date of Birth
                                             </span>
                                             <span className="text-gray-500">
-                                                : 2000-07-12
+                                                {user.date_of_birth}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -135,7 +134,7 @@ export default function Show({ user }) {
                                                 Blood Group
                                             </span>
                                             <span className="text-gray-500">
-                                                : AB+
+                                                {/* {user.blood_group} */}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -143,7 +142,7 @@ export default function Show({ user }) {
                                                 Marital Status
                                             </span>
                                             <span className="text-gray-500">
-                                                : Unmarried
+                                                {/* {user.marital_status} */}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -151,7 +150,7 @@ export default function Show({ user }) {
                                                 National Id
                                             </span>
                                             <span className="text-gray-500">
-                                                :
+                                                {/* {user.national_id} */}
                                             </span>
                                         </div>
                                     </div>
@@ -163,7 +162,7 @@ export default function Show({ user }) {
                                                 Father's Name
                                             </span>
                                             <span className="text-gray-500">
-                                                : MD ANAMUL MIA
+                                                {/* {user.father_name} */}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -171,7 +170,7 @@ export default function Show({ user }) {
                                                 Father's Occupation
                                             </span>
                                             <span className="text-gray-500">
-                                                :
+                                                {/* {user.father_occupation} */}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -179,7 +178,7 @@ export default function Show({ user }) {
                                                 Mother's Name
                                             </span>
                                             <span className="text-gray-500">
-                                                : AMENA BEGUM
+                                                {/* {user.mother_name} */}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -187,7 +186,7 @@ export default function Show({ user }) {
                                                 Mother's Occupation
                                             </span>
                                             <span className="text-gray-500">
-                                                :
+                                                {/* : {user.mother_occupation} */}
                                             </span>
                                         </div>
                                         <div className="flex">

@@ -1,13 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
 
 export default function Dashboard() {
-    const { auth, stats, courses } = usePage().props;
+    const { auth, stats, courses, upcoming_courses } = usePage().props;
     const { user } = auth;
     console.log(user);
     console.log(courses);
-
+    console.log(upcoming_courses);
     return (
         <AppLayout>
             <Head title="Dashboard" />
@@ -55,11 +63,91 @@ export default function Dashboard() {
 
                         {/* COURSES SECTION */}
                         <div className="mt-6 grid gap-6 md:grid-cols-2">
-                            <CourseTable title="Current Courses" />
-                            <StatusBox
+                            {/*<CourseTable title="Current Courses" />*/}
+
+                            {/* Table Section Current Course */}
+                            <div className="overflow-hidden rounded-lg border">
+                                <StatusBox title="Current Courses" />
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>#</TableHead>
+                                            <TableHead>Title</TableHead>
+                                            <TableHead>Code</TableHead>
+                                            <TableHead>Credit</TableHead>
+                                            <TableHead>Semester</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {courses.map((course, index) => (
+                                            <TableRow key={course.id}>
+                                                <TableCell>
+                                                    {(courses.from || 0) +
+                                                        index}
+                                                </TableCell>
+                                                <TableCell className="font-medium">
+                                                    {course.title}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {course.code}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {course.credit}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {course.semester}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+
+                            {/* Table Section Upcoming Course */}
+
+                            <div className="overflow-hidden rounded-lg border">
+                                <StatusBox title="Upcoming Courses" />
+
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>#</TableHead>
+                                            <TableHead>Title</TableHead>
+                                            <TableHead>Code</TableHead>
+                                            <TableHead>Credit</TableHead>
+                                            <TableHead>Semester</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {upcoming_courses.map(
+                                            (course, index) => (
+                                                <TableRow key={course.id}>
+                                                    <TableCell>
+                                                        {(upcoming_courses.from ||
+                                                            0) + index}
+                                                    </TableCell>
+                                                    <TableCell className="font-medium">
+                                                        {course.title}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {course.code}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {course.credit}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {course.semester}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ),
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            {/* <StatusBox
                                 title="Upcoming Courses"
                                 message="There is no offered course for next semester."
-                            />
+                            /> */}
                         </div>
 
                         <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -195,13 +283,12 @@ function CourseTable({ title }) {
     );
 }
 
-function StatusBox({ title, message }) {
+function StatusBox({ title }) {
     return (
-        <div className="rounded-xl border bg-background">
+        <div className="border bg-background">
             <div className="bg-muted px-6 py-3 text-sm font-semibold uppercase">
                 {title}
             </div>
-            <div className="p-4 text-sm text-muted-foreground">{message}</div>
         </div>
     );
 }

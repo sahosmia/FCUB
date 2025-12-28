@@ -28,11 +28,17 @@ $user = Auth::user();
              $courses = Course::where('semester', $user->semester)
                 ->orderBy('title')
                 ->get();
+             $upcoming_courses = Course::where('semester', $user->semester+1)
+                ->orderBy('title')
+                ->get();
         }
+
+       //return $courses ?? null;
 
         return Inertia::render('dashboard', [
             'stats' => $stats,
             'courses' => $courses ?? null,
+            'upcoming_courses' => $upcoming_courses ?? null,
         ]);
     }
 }

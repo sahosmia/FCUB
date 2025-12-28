@@ -37,6 +37,19 @@ export default function Index() {
         auth,
     } = usePage().props;
 
+    const { user } = auth;
+    console.log(user.role);
+
+    const totalSemester = 8;
+    const totalCourseFee = Number(user.course_fee || 0);
+    const perSemesterFee = totalCourseFee / totalSemester;
+    const monthlyFee = perSemesterFee / 6;
+    const formatMoney = (amount) =>
+        amount.toLocaleString('en-BD', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
     const [confirmConfig, setConfirmConfig] = useState({
         open: false,
         id: null,
@@ -156,90 +169,93 @@ export default function Index() {
                     <StatCard
                         icon={<DollarSign />}
                         title="Total Payable"
-                        value="200000"
+                        value={user.course_fee}
                     />
                     <StatCard
                         icon={<DollarSign />}
                         title="Paid Fee"
-                        value="150000"
+                        value={user.paid_fee}
                     />
                     <StatCard
                         icon={<DollarSign />}
                         title="Due Fee"
-                        value="50000"
+                        value={user.due_fee}
                     />
                 </div>
 
-                {/* Fees Information */}
-                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-                    <div className="flex items-center gap-2 bg-gray-400 px-6 py-3 text-sm text-white uppercase">
-                        <span>🔶</span>
-                        <span>Fees Information</span>
-                    </div>
+                {user.role === 'student' && (
+                    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+                        <div className="flex items-center gap-2 bg-gray-400 px-6 py-3 text-sm text-white uppercase">
+                            <span>🔶</span>
+                            <span>Fees Information</span>
+                        </div>
 
-                    <div className="p-6">
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-gray-200">
-                                        <th className="px-4 py-3 text-left text-sm text-gray-700">
-                                            Title
-                                        </th>
-                                        <th className="px-4 py-3 text-right text-sm text-gray-700">
-                                            Amount
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            Admission Fee
-                                        </td>
-                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                            5,500.00 BDT
-                                        </td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            Course Fee (Total)
-                                        </td>
-                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                            130,000.00 BDT
-                                        </td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            Semester Fee
-                                        </td>
-                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                            15,250.00 BDT × 8 semester(s)
-                                        </td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            Monthly Equivalent
-                                        </td>
-                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                            2,709.00 BDT approx.
-                                        </td>
-                                    </tr>
-                                    <tr className="border-b border-gray-100">
-                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                            Payment Term
-                                        </td>
-                                        <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                            Monthly/Semester
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div className="p-6">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-gray-200">
+                                            <th className="px-4 py-3 text-left text-sm text-gray-700">
+                                                Title
+                                            </th>
+                                            <th className="px-4 py-3 text-right text-sm text-gray-700">
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="px-4 py-3 text-sm text-gray-900">
+                                                Admission Fee
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                {user.admission_fee} BDT
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="px-4 py-3 text-sm text-gray-900">
+                                                Course Fee (Total)
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                {user.course_fee} BDT
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="px-4 py-3 text-sm text-gray-900">
+                                                Semester Fee
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                {perSemesterFee} BDT × 8
+                                                semester(s)
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="px-4 py-3 text-sm text-gray-900">
+                                                Monthly Equivalent
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                {formatMoney(monthlyFee)} BDT
+                                                approx.
+                                            </td>
+                                        </tr>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="px-4 py-3 text-sm text-gray-900">
+                                                Payment Term
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                                Monthly/Semester
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
+
                 <div>
                     <h2 className="text-lg font-semibold">Payment Records</h2>
                 </div>
-
                 {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-3">
                     <Input

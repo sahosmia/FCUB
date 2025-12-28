@@ -41,12 +41,12 @@ export default function Index() {
             role: serverFilters.role ?? '',
         });
 
-        useEffect(() => {
+    useEffect(() => {
         if (flash?.success) {
             toast.success(flash.success, {
                 id: 'success-toast',
             });
-        }.
+        }
 
         if (flash?.error) {
             toast.error(flash.error, {
