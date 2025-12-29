@@ -174,6 +174,7 @@ export default function Index() {
                         </TableBody>
                     </Table>
                 </div>
+                
                 <Pagination paginator={users} />
             </div>
         </AppLayout>

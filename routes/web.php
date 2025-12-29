@@ -30,6 +30,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
   //  Route::get('profile', [StudentController::class, 'show'])->name('profile.show');
 
+//    // Edit pages
+//     Route::get('/profile/edit/{section}', [ProfileController::class, 'edit'])
+//         ->name('profile.edit');
+
+//     // Update
+//     Route::put('/profile/update/{section}', [ProfileController::class, 'update'])
+//         ->name('profile.update');
+
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // courses

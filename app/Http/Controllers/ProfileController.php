@@ -10,7 +10,7 @@ class ProfileController extends Controller
 {
     public function show()
     {
-$user = Auth::user()->load('batch');
+        $user = Auth::user()->load('batch');
         $payments = $user->payments()->orderBy('payment_date', 'desc')->paginate(10);
 
         return Inertia::render('profile/Show', [
@@ -18,4 +18,7 @@ $user = Auth::user()->load('batch');
             'payments' => $payments,
         ]);
     }
+
+
+   
 }

@@ -31,6 +31,51 @@ return new class extends Migration
             $table->string('student_id')->unique()->nullable();
             $table->string('semester') ->default('1');
             $table->boolean('status')->default(true);
+
+             // Basic Info
+            $table->string('home_phone')->nullable();
+            $table->string('blood_group')->nullable();
+            $table->string('marital_status')->nullable();
+            $table->string('national_id')->nullable();
+
+            // Parents Info
+            $table->string('father_name')->nullable();
+            $table->string('father_occupation')->nullable();
+            $table->string('mother_name')->nullable();
+            $table->string('mother_occupation')->nullable();
+            $table->string('parents_phone')->nullable();
+
+            // Present Address
+            $table->text('present_address')->nullable();
+            $table->string('present_thana')->nullable();
+            $table->string('present_post_code')->nullable();
+            $table->string('present_district')->nullable();
+            $table->string('present_country')->nullable();
+
+            // Permanent Address
+            $table->text('permanent_address')->nullable();
+            $table->string('permanent_thana')->nullable();
+            $table->string('permanent_post_code')->nullable();
+            $table->string('permanent_district')->nullable();
+            $table->string('permanent_country')->nullable();
+
+            // SSC / Equivalent
+            $table->string('ssc_exam_name')->nullable();
+            $table->string('ssc_group')->nullable();
+            $table->decimal('ssc_result', 4, 2)->nullable();
+            $table->year('ssc_passing_year')->nullable();
+            $table->string('ssc_institute')->nullable();
+            $table->string('ssc_board')->nullable();
+
+            // HSC / Equivalent
+            $table->string('hsc_exam_name')->nullable();
+            $table->string('hsc_group')->nullable();
+            $table->decimal('hsc_result', 4, 2)->nullable();
+            $table->year('hsc_passing_year')->nullable();
+            $table->string('hsc_institute')->nullable();
+            $table->string('hsc_board')->nullable();
+
+
             $table->rememberToken();
             $table->timestamps();
         });

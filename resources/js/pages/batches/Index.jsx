@@ -46,7 +46,7 @@ export default function Index() {
         <AppLayout>
             <Head title="Batches" />
 
-            <div className="mx-auto max-w-7xl space-y-8 px-6 py-8">
+            <div className="max-w-8xl space-y-8 px-6 py-8">
                 {/* ================= HEADER ================= */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>

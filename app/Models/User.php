@@ -36,6 +36,48 @@ class User extends Authenticatable
         'admission_fee',
         'student_id',
         'semester',
+         // Basic Info
+        'home_phone',
+        'blood_group',
+        'marital_status',
+        'national_id',
+
+        // Parents Info
+        'father_name',
+        'father_occupation',
+        'mother_name',
+        'mother_occupation',
+        'parents_phone',
+
+        // Present Address
+        'present_address',
+        'present_thana',
+        'present_post_code',
+        'present_district',
+        'present_country',
+
+        // Permanent Address
+        'permanent_address',
+        'permanent_thana',
+        'permanent_post_code',
+        'permanent_district',
+        'permanent_country',
+
+        // SSC / Equivalent
+        'ssc_exam_name',
+        'ssc_group',
+        'ssc_result',
+        'ssc_passing_year',
+        'ssc_institute',
+        'ssc_board',
+
+        // HSC / Equivalent
+        'hsc_exam_name',
+        'hsc_group',
+        'hsc_result',
+        'hsc_passing_year',
+        'hsc_institute',
+        'hsc_board',
 
     ];
 

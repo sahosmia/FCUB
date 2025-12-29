@@ -94,7 +94,7 @@ export default function Show({ user }) {
                                                 Mobile Number
                                             </span>
                                             <span className="text-gray-500">
-                                                {user.phone}
+                                                : {user.phone}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -102,7 +102,7 @@ export default function Show({ user }) {
                                                 Email Address
                                             </span>
                                             <span className="text-gray-500">
-                                                {user.email}
+                                                : {user.email}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -110,7 +110,7 @@ export default function Show({ user }) {
                                                 Home Phone
                                             </span>
                                             <span className="text-gray-500">
-                                                : +880 1765-486609
+                                                : {user.home_phone}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -118,7 +118,7 @@ export default function Show({ user }) {
                                                 Gender
                                             </span>
                                             <span className="text-gray-500">
-                                                {user.gender}
+                                                : {user.gender}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -126,7 +126,7 @@ export default function Show({ user }) {
                                                 Date of Birth
                                             </span>
                                             <span className="text-gray-500">
-                                                {user.date_of_birth}
+                                                : {user.date_of_birth}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -134,7 +134,7 @@ export default function Show({ user }) {
                                                 Blood Group
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.blood_group} */}
+                                                : {user.blood_group}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -142,7 +142,7 @@ export default function Show({ user }) {
                                                 Marital Status
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.marital_status} */}
+                                                : {user.marital_status}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -150,7 +150,7 @@ export default function Show({ user }) {
                                                 National Id
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.national_id} */}
+                                                : {user.national_id}
                                             </span>
                                         </div>
                                     </div>
@@ -162,7 +162,7 @@ export default function Show({ user }) {
                                                 Father's Name
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.father_name} */}
+                                                : {user.father_name}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -170,7 +170,7 @@ export default function Show({ user }) {
                                                 Father's Occupation
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.father_occupation} */}
+                                                : {user.father_occupation}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -178,7 +178,7 @@ export default function Show({ user }) {
                                                 Mother's Name
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* {user.mother_name} */}
+                                                : {user.mother_name}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -186,7 +186,7 @@ export default function Show({ user }) {
                                                 Mother's Occupation
                                             </span>
                                             <span className="text-gray-500">
-                                                {/* : {user.mother_occupation} */}
+                                                : {user.mother_occupation}
                                             </span>
                                         </div>
                                         <div className="flex">
@@ -194,7 +194,7 @@ export default function Show({ user }) {
                                                 Parents Phone
                                             </span>
                                             <span className="text-gray-500">
-                                                : +880 1765-486609
+                                                : {user.parents_phone}
                                             </span>
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@ export default function Show({ user }) {
                                                     Address
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : -0
+                                                    : {user.present_address}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -231,7 +231,7 @@ export default function Show({ user }) {
                                                     Thana
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Daulatpuri
+                                                    : {user.present_thana}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -239,7 +239,7 @@ export default function Show({ user }) {
                                                     Post Code
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    :
+                                                    : {user.present_post_code}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -247,7 +247,7 @@ export default function Show({ user }) {
                                                     District
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Comilla
+                                                    : {user.present_district}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -255,7 +255,7 @@ export default function Show({ user }) {
                                                     Country
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : BANGLADESH
+                                                    : {user.present_country}
                                                 </span>
                                             </div>
                                         </div>
@@ -271,7 +271,7 @@ export default function Show({ user }) {
                                                     Address
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : GONGAPRASAD
+                                                    : {user.permanent_address}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -279,7 +279,7 @@ export default function Show({ user }) {
                                                     Thana
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Daulatpuri
+                                                    : {user.permanent_thana}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -287,7 +287,7 @@ export default function Show({ user }) {
                                                     Post Code
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    :
+                                                    : {user.permanent_post_code}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -295,7 +295,7 @@ export default function Show({ user }) {
                                                     District
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Comilla
+                                                    : {user.permanent_district}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -303,7 +303,7 @@ export default function Show({ user }) {
                                                     Country
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : BANGLADESH
+                                                    : {user.permanent_country}
                                                 </span>
                                             </div>
                                         </div>
@@ -332,7 +332,7 @@ export default function Show({ user }) {
                                                     Exam Name
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Vocational(SSC)
+                                                    : {user.ssc_exam_name}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -340,7 +340,7 @@ export default function Show({ user }) {
                                                     Group
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : BUILDING MAINTENANCE
+                                                    : {user.ssc_group}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -348,7 +348,7 @@ export default function Show({ user }) {
                                                     Result
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : 5.00
+                                                    : {user.ssc_result}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -356,7 +356,7 @@ export default function Show({ user }) {
                                                     Passing Year
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : 2016
+                                                    : {user.ssc_passing_year}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -364,8 +364,7 @@ export default function Show({ user }) {
                                                     Institute Name
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : DAUDKANDI ADARSHA HIGH
-                                                    SCHOOL
+                                                    : {user.ssc_institute_name}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -373,7 +372,7 @@ export default function Show({ user }) {
                                                     Board
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : BTEB
+                                                    : {user.ssc_board}
                                                 </span>
                                             </div>
                                         </div>
@@ -390,7 +389,7 @@ export default function Show({ user }) {
                                                     Exam Name
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : Diploma
+                                                    : {user.hsc_exam_name}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -398,7 +397,7 @@ export default function Show({ user }) {
                                                     Group
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : COMPUTER
+                                                    : {user.hsc_group}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -406,7 +405,7 @@ export default function Show({ user }) {
                                                     Result
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : 3.63
+                                                    : {user.hsc_result}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -414,7 +413,7 @@ export default function Show({ user }) {
                                                     Passing Year
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : 2020
+                                                    : {user.hsc_passing_year}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -422,8 +421,7 @@ export default function Show({ user }) {
                                                     Institute Name
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : DHAKA POLYTECHNIC
-                                                    INSTITUTE
+                                                    : {user.hsc_institute_name}
                                                 </span>
                                             </div>
                                             <div className="flex">
@@ -431,7 +429,7 @@ export default function Show({ user }) {
                                                     Board
                                                 </span>
                                                 <span className="text-gray-500">
-                                                    : BTEB
+                                                    : {user.hsc_board}
                                                 </span>
                                             </div>
                                         </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Batch;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -56,8 +57,10 @@ class BatchController extends Controller
     public function show(Batch $batch)
     {
 
+        $users = User::where('batch_id', $batch->id)->get();
         return Inertia::render('batches/Show', [
             'batch' => $batch,
+            'users' => $users,
         ]);
     }
 
