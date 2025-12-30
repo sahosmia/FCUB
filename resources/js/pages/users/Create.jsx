@@ -173,7 +173,7 @@ export default function Create() {
                                     batches
                                         ? batches.map((batch) => ({
                                               value: batch.id,
-                                              label: batch.name,
+                                              label: batch.title,
                                           }))
                                         : []
                                 }

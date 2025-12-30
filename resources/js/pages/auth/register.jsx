@@ -7,126 +7,215 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { genders } from '@/constants';
+
+import { genders, semesters } from '@/constants';
 import AuthLayout from '@/layouts/auth-layout';
 
-export default function Register() {
+export default function Register({ batches }) {
     const form = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        phone: '',
         date_of_birth: '',
         gender: '',
-        admission_document: null,
-        phone: '',
+        student_id: '',
+        batch_id: '',
+        semester: '',
+        session: '',
         course_fee: '',
         admission_fee: '',
-        student_id: '',
-        semester: '',
-        batch: '',
+        admission_document: null,
     });
 
-    const handleSubmit = (e) => {
+    const submit = (e) => {
         e.preventDefault();
         form.post('/register');
     };
 
     return (
         <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
+            title="Create Student Account"
+            description="Fill in the information below to register as a student"
         >
             <Head title="Register" />
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                <div className="grid gap-6">
-                    <FormField label="Name" error={form.errors.name}>
-                        <Input
-                            id="name"
-                            type="text"
-                            required
-                            autoFocus
-                            autoComplete="name"
-                            value={form.data.name}
-                            onChange={(e) =>
-                                form.setData('name', e.target.value)
-                            }
-                            placeholder="Full name"
-                        />
-                    </FormField>
 
-                    <FormField label="Email address" error={form.errors.email}>
-                        <Input
-                            id="email"
-                            type="email"
-                            required
-                            autoComplete="email"
-                            value={form.data.email}
-                            onChange={(e) =>
-                                form.setData('email', e.target.value)
-                            }
-                            placeholder="email@example.com"
-                        />
-                    </FormField>
+            <form onSubmit={submit} className="space-y-8">
+                {/* ===== BASIC INFORMATION ===== */}
+                <div>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">
+                        Basic Information
+                    </h3>
 
-                    <FormField label="Password" error={form.errors.password}>
-                        <Input
-                            id="password"
-                            type="password"
-                            required
-                            autoComplete="new-password"
-                            value={form.data.password}
-                            onChange={(e) =>
-                                form.setData('password', e.target.value)
-                            }
-                            placeholder="Password"
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField label="Full Name" error={form.errors.name}>
+                            <Input
+                                value={form.data.name}
+                                onChange={(e) =>
+                                    form.setData('name', e.target.value)
+                                }
+                                placeholder="John Doe"
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Email Address"
+                            error={form.errors.email}
+                        >
+                            <Input
+                                type="email"
+                                value={form.data.email}
+                                onChange={(e) =>
+                                    form.setData('email', e.target.value)
+                                }
+                                placeholder="student@email.com"
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Phone Number"
+                            error={form.errors.phone}
+                        >
+                            <Input
+                                value={form.data.phone}
+                                onChange={(e) =>
+                                    form.setData('phone', e.target.value)
+                                }
+                                placeholder="+8801XXXXXXXXX"
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Date of Birth"
+                            error={form.errors.date_of_birth}
+                        >
+                            <Input
+                                type="date"
+                                value={form.data.date_of_birth}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'date_of_birth',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </FormField>
+
+                        <SelectForm
+                            label="Gender"
+                            error={form.errors.gender}
+                            value={form.data.gender}
+                            onValueChange={(v) => form.setData('gender', v)}
+                            placeholder="Select gender"
+                            options={genders}
                         />
-                    </FormField>
+                    </div>
+                </div>
+
+                {/* ===== ACADEMIC INFORMATION ===== */}
+                <div>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">
+                        Academic Information
+                    </h3>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField
+                            label="Student ID"
+                            error={form.errors.student_id}
+                        >
+                            <Input
+                                value={form.data.student_id}
+                                onChange={(e) =>
+                                    form.setData('student_id', e.target.value)
+                                }
+                                placeholder="2024xxxx"
+                            />
+                        </FormField>
+
+                        <FormField label="Session">
+                            <Input
+                                value={form.data.session}
+                                onChange={(e) =>
+                                    form.setData('session', e.target.value)
+                                }
+                                placeholder="2023–2024"
+                            />
+                        </FormField>
+
+                        <SelectForm
+                            label="Batch"
+                            error={form.errors.batch_id}
+                            value={form.data.batch_id}
+                            onValueChange={(v) => form.setData('batch_id', v)}
+                            placeholder="Select batch"
+                            options={
+                                batches?.map((b) => ({
+                                    value: b.id,
+                                    label: b.title,
+                                })) || []
+                            }
+                        />
+
+                        <SelectForm
+                            label="Semester"
+                            error={form.errors.semester}
+                            value={form.data.semester}
+                            onValueChange={(v) => form.setData('semester', v)}
+                            placeholder="Select semester"
+                            options={semesters}
+                        />
+                    </div>
+                </div>
+
+                {/* ===== FEES ===== */}
+                <div>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">
+                        Fees Information
+                    </h3>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField
+                            label="Course Fee"
+                            error={form.errors.course_fee}
+                        >
+                            <Input
+                                type="number"
+                                value={form.data.course_fee}
+                                onChange={(e) =>
+                                    form.setData('course_fee', e.target.value)
+                                }
+                                placeholder="Total course fee"
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Admission Fee"
+                            error={form.errors.admission_fee}
+                        >
+                            <Input
+                                type="number"
+                                value={form.data.admission_fee}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'admission_fee',
+                                        e.target.value,
+                                    )
+                                }
+                                placeholder="Admission fee"
+                            />
+                        </FormField>
+                    </div>
+                </div>
+
+                {/* ===== DOCUMENT ===== */}
+                <div>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">
+                        Documents
+                    </h3>
 
                     <FormField
-                        label="Confirm password"
-                        error={form.errors.password_confirmation}
-                    >
-                        <Input
-                            id="password_confirmation"
-                            type="password"
-                            required
-                            autoComplete="new-password"
-                            value={form.data.password_confirmation}
-                            onChange={(e) =>
-                                form.setData(
-                                    'password_confirmation',
-                                    e.target.value,
-                                )
-                            }
-                            placeholder="Confirm password"
-                        />
-                    </FormField>
-
-                    <FormField
-                        label="Date of Birth"
-                        error={form.errors.date_of_birth}
-                    >
-                        <Input
-                            type="date"
-                            value={form.data.date_of_birth}
-                            onChange={(e) =>
-                                form.setData('date_of_birth', e.target.value)
-                            }
-                        />
-                    </FormField>
-
-                    <SelectForm
-                        label="Gender"
-                        error={form.errors.gender}
-                        value={form.data.gender}
-                        onValueChange={(value) => form.setData('gender', value)}
-                        placeholder="Select Gender"
-                        options={genders}
-                    />
-
-                    <FormField
-                        label="Admission Document"
+                        label="Admission Document (PDF / Image)"
                         error={form.errors.admission_document}
                     >
                         <Input
@@ -139,128 +228,60 @@ export default function Register() {
                             }
                         />
                     </FormField>
-                    <FormField label="Phone Number" error={form.errors.phone}>
-                        <Input
-                            id="phone"
-                            type="text"
-                            required
-                            autoFocus
-                            autoComplete="phone"
-                            value={form.data.phone}
-                            onChange={(e) =>
-                                form.setData('phone', e.target.value)
-                            }
-                            placeholder="Phone number"
-                        />
-                    </FormField>
-                    <FormField
-                        label="Course Fee"
-                        error={form.errors.course_fee}
-                    >
-                        <Input
-                            id="course_fee"
-                            type="number"
-                            required
-                            autoFocus
-                            autoComplete="phone"
-                            value={form.data.course_fee}
-                            onChange={(e) =>
-                                form.setData('course_fee', e.target.value)
-                            }
-                            placeholder="Course fee"
-                        />
-                    </FormField>
-                    <FormField
-                        label="Admission Fee"
-                        error={form.errors.admission_fee}
-                    >
-                        <Input
-                            id="admission_fee"
-                            type="number"
-                            required
-                            autoFocus
-                            autoComplete="admission_fee"
-                            value={form.data.admission_fee}
-                            onChange={(e) =>
-                                form.setData('admission_fee', e.target.value)
-                            }
-                            placeholder="Admission fee"
-                        />
-                    </FormField>
-                    <FormField
-                        label="Student  Id"
-                        error={form.errors.student_id}
-                    >
-                        <Input
-                            id="student_id"
-                            type="number"
-                            required
-                            autoFocus
-                            autoComplete="student_id"
-                            value={form.data.student_id}
-                            onChange={(e) =>
-                                form.setData('student_id', e.target.value)
-                            }
-                            placeholder="Student ID"
-                        />
-                    </FormField>
-                    <FormField label="Semester" error={form.errors.semester}>
-                        <Input
-                            id="semester"
-                            type="number"
-                            required
-                            autoFocus
-                            autoComplete="semester"
-                            value={form.data.semester}
-                            onChange={(e) =>
-                                form.setData('semester', e.target.value)
-                            }
-                            placeholder="Semester"
-                        />
-                    </FormField>
-                    <FormField label="Batch" error={form.errors.batch}>
-                        <Input
-                            id="batch"
-                            type="number"
-                            required
-                            autoFocus
-                            autoComplete="batch"
-                            value={form.data.batch}
-                            onChange={(e) =>
-                                form.setData('batch', e.target.value)
-                            }
-                            placeholder="Batch"
-                        />
-                    </FormField>
-                    <FormField label="Session" error={form.errors.session}>
-                        <Input
-                            id="session"
-                            type="text"
-                            required
-                            autoFocus
-                            autoComplete="session"
-                            value={form.data.session}
-                            onChange={(e) =>
-                                form.setData('session', e.target.value)
-                            }
-                            placeholder="Session"
-                        />
-                    </FormField>
-
-                    <Button
-                        type="submit"
-                        className="mt-2 w-full"
-                        disabled={form.processing}
-                    >
-                        {form.processing && <Spinner />}
-                        Create account
-                    </Button>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
+                {/* ===== SECURITY ===== */}
+                <div>
+                    <h3 className="mb-4 text-sm font-semibold text-muted-foreground">
+                        Security
+                    </h3>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                        <FormField
+                            label="Password"
+                            error={form.errors.password}
+                        >
+                            <Input
+                                type="password"
+                                value={form.data.password}
+                                onChange={(e) =>
+                                    form.setData('password', e.target.value)
+                                }
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Confirm Password"
+                            error={form.errors.password_confirmation}
+                        >
+                            <Input
+                                type="password"
+                                value={form.data.password_confirmation}
+                                onChange={(e) =>
+                                    form.setData(
+                                        'password_confirmation',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </FormField>
+                    </div>
+                </div>
+
+                {/* ===== ACTION ===== */}
+                <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={form.processing}
+                >
+                    {form.processing && <Spinner />}
+                    Create Account
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
                     Already have an account?{' '}
                     <TextLink href={login()}>Log in</TextLink>
-                </div>
+                </p>
             </form>
         </AuthLayout>
     );

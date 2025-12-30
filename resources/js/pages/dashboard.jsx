@@ -13,9 +13,6 @@ import { Head, usePage } from '@inertiajs/react';
 export default function Dashboard() {
     const { auth, stats, courses, upcoming_courses } = usePage().props;
     const { user } = auth;
-    console.log(user);
-    console.log(courses);
-    console.log(upcoming_courses);
     return (
         <AppLayout>
             <Head title="Dashboard" />

@@ -18,7 +18,4 @@ class ProfileController extends Controller
             'payments' => $payments,
         ]);
     }
-
-
-   
 }

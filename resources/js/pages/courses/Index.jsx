@@ -31,6 +31,7 @@ export default function Index() {
         auth,
     } = usePage().props;
 
+    console.log(courses);
     const user = auth.user;
 
     const { filters, searchTerm, setSearchTerm, handleChange } =
