@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller{
     public function index(){
-$user = Auth::user();
+        $user = Auth::user()->load('batch');
         $stats = [];
 
         if ($user->role === 'admin') {
@@ -22,7 +22,7 @@ $user = Auth::user();
             $stats['course_fee'] = $user->course_fee;
             $stats['paid_fee'] = $user->paid_fee;
             $stats['due_fee'] = $user->due_fee;
-            $stats['batch'] = $user->batch_id;
+            $stats['batch'] = $user->batch->title;
             $stats['semester'] = $user->semester;
 
              $courses = Course::where('semester', $user->semester)

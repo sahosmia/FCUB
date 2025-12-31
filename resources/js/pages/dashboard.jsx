@@ -13,6 +13,10 @@ import { Head, usePage } from '@inertiajs/react';
 export default function Dashboard() {
     const { auth, stats, courses, upcoming_courses } = usePage().props;
     const { user } = auth;
+
+    console.log(stats);
+    console.log(user);
+
     return (
         <AppLayout>
             <Head title="Dashboard" />
@@ -54,6 +58,7 @@ export default function Dashboard() {
                             />
                             <StatCard title="Paid Fee" value={stats.paid_fee} />
                             <StatCard title="Due Fee" value={stats.due_fee} />
+                            {/* <StatCard title="Batch" value={stats.batch} /> */}
                             <StatCard title="Batch" value={stats.batch} />
                             <StatCard title="Semester" value={stats.semester} />
                         </div>

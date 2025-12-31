@@ -86,6 +86,7 @@ export default function Index() {
                             key: 'sort_by',
                             placeholder: 'Sort By',
                             items: [
+                                { label: 'Semester', value: 'semester' },
                                 { label: 'Date', value: 'created_at' },
                                 { label: 'Title', value: 'title' },
                             ],

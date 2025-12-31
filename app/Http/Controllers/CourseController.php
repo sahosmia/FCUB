@@ -16,8 +16,8 @@ class CourseController extends Controller
      * These values mirror the frontend filter state.
      */
     $search  = $request->string('search')->toString();
-    $sortBy  = $request->input('sort_by', 'created_at');
-    $sortDir = $request->input('sort_dir', 'desc');
+    $sortBy  = $request->input('sort_by', 'semester');
+    $sortDir = $request->input('sort_dir', 'asc');
     $limit   = (int) $request->input('limit', 10);
 
     /**
@@ -40,9 +40,9 @@ class CourseController extends Controller
 
 
 
-    $allowedSort = ['title', 'code'];
+    $allowedSort = ['title', 'code','semester'];
     if (!in_array($sortBy, $allowedSort)) {
-        $sortBy = 'title';
+        $sortBy = 'semester';
     }
 
     $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
